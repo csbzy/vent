@@ -1,11 +1,13 @@
 syntax = "proto3";
 package proto;
 
-message RegisterTos{
+
+
+message RegisterC2s{
 	uint64 phone_number =1;
 	string password = 2;
 }
 
-message RegisterToc{
+message RegisterS2c{
 	uint32 err_code =1;
 }
