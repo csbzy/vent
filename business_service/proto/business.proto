@@ -1,0 +1,11 @@
+syntax = "proto3";
+package proto;
+
+message RegisterTos{
+	uint64 phone_number =1;
+	string password = 2;
+}
+
+message RegisterToc{
+	uint32 err_code =1;
+}
