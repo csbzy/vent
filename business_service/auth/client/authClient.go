@@ -1,4 +1,4 @@
-package main
+package authClient
 
 import (
 	pb "github.com/chenshaobo/vent/business_service/proto"
@@ -15,7 +15,7 @@ var (
 	serv = flag.String("service","registerService","service name")
 	reg = flag.String("reg","172.16.7.119:8500","register address")
 )
-func main(){
+func NewClient(){
 	flag.Parse()
 	fmt.Printf("serv:%v,reg:%v\n",*serv,*reg)
 	r := consul.NewResolver(*serv)
