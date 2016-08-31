@@ -1,0 +1,15 @@
+syntax = "proto3";
+package proto;
+
+service Register {
+	rpc Register(RegisterReq) returns (RegisterRes){}
+}
+
+message RegisterReq{
+	uint64 phone_number =1;
+	string password = 2;
+}
+
+message RegisterRes{
+	uint32 err_code =1;
+}

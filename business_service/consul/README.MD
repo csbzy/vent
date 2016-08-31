@@ -1,0 +1,1 @@
+THIS A MODIFY  COPY FROM [wonaming](https://github.com/wothing/wonaming.git) WHIT git  VERSION 0f5a802
