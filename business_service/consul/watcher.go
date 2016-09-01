@@ -33,7 +33,6 @@ func (cw *ConsulWatcher) Next() ([]*naming.Update, error) {
 	// Nil cw.addrs means it is initial called
 	// If get addrs, return to balancer
 	// If no addrs, need to watch consul
-	fmt.Printf("next %v\n",cw.li)
 	if cw.addrs == nil {
 		// must return addrs to balancer, use ticker to query consul till data gotten
 		addrs, li, _ := cw.queryConsul(nil)
@@ -45,16 +44,13 @@ func (cw *ConsulWatcher) Next() ([]*naming.Update, error) {
 			return GenUpdates([]string{}, addrs), nil
 		}
 	}
-	fmt.Print("watcher\n")
 	for {
 		// watch consul
 		addrs, li, err := cw.queryConsul(&consul.QueryOptions{WaitIndex: cw.li})
 		if err != nil {
-			fmt.Printf("ERROR:%v",err)
 			time.Sleep(1 * time.Second)
 			continue
 		}
-		fmt.Print("watcher\n")
 		// generate updates
 		updates := GenUpdates(cw.addrs, addrs)
 
@@ -78,7 +74,6 @@ func (cw *ConsulWatcher) queryConsul(q *consul.QueryOptions) ([]string, uint64, 
 	if err != nil {
 		return nil, 0, err
 	}
-
 	addrs := make([]string, 0)
 	for _, s := range cs {
 		// addr should like: 127.0.0.1:8001
