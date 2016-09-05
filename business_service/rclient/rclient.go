@@ -45,7 +45,7 @@ func (rc *RClients) register(serviceName string,registerHost string) {
 	if _,ok := rc.cc[serviceName]; !ok {
 		r := consulb.NewResolver(serviceName)
 		b := grpc.RoundRobin(r)
-		utils.Logger.Info("register ",zap.String("service name",serviceName))
+		utils.Logger.Info("register ",zap.String("service name",serviceName),zap.String("register host",registerHost))
 		conn, err := grpc.Dial(registerHost, grpc.WithInsecure(), grpc.WithBalancer(b), grpc.WithTimeout(time.Second * 10))
 		utils.Logger.Info("dial pass")
 		utils.PrintErr(err)

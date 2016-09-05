@@ -7,6 +7,9 @@ import(
 	"flag"
 	"github.com/chenshaobo/vent/business_service/utils"
 	"github.com/uber-go/zap"
+	pb "github.com/chenshaobo/vent/business_service/proto"
+	"github.com/golang/protobuf/proto"
+	"fmt"
 )
 
 var (
@@ -15,8 +18,7 @@ var (
 
 func main(){
 	flag.Parse()
-	rclient.Init(*reg)
-	rclient.Register("registerService")
+	TestUnmarshal()
 	initApi()
 }
 
@@ -41,4 +43,15 @@ func fin(ctx *iris.Context){
 	}
 	ctx.Response.StatusCode()
 	ctx.Next()
+}
+
+
+func TestUnmarshal(){
+	d :=&pb.RegisterC2S{PhoneNumber:111111,Password:"111111"}
+	data,err := proto.Marshal(d)
+	fmt.Printf("DATA:%v,err:%v",data,err)
+	r := &pb.RegisterC2S{}
+
+	err = proto.Unmarshal(data,r)
+	fmt.Printf("DATA:%v,err:%v",r,err)
 }

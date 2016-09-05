@@ -6,7 +6,7 @@ import (
 )
 
 func TestGet(t *testing.T) {
-	Init("172.16.7.119:800")
+	Init("172.16.7.119:8000")
 	Register("registerServices")
 	if Get("registerServices") == nil{
 		t.Log("GET SERVICE error")
