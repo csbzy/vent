@@ -4,38 +4,30 @@ import (
 	"github.com/kataras/iris"
 	"github.com/golang/protobuf/proto"
 	pb "github.com/chenshaobo/vent/business_service/proto"
-	"github.com/chenshaobo/vent/business_service/rclient"
+	"github.com/chenshaobo/vent/business_service/rpclient"
 	"github.com/chenshaobo/vent/business_service/utils"
 	"golang.org/x/net/context"
-	"github.com/uber-go/zap"
-	"io/ioutil"
-	"os"
-	"fmt"
 )
 
 
 //REGISTER FOR IS API FOR  /api/v1/user/register
 func Register(c *iris.Context) {
 	body := c.PostBody()
-	r := &pb.RegisterC2S{}
-	fmt.Printf("body:%v",body)
+	c2s := &pb.RegisterC2S{}
 	conn := rpclient.Get("registerService")
 	if conn == nil {
-		utils.Logger.Error("get register service error")
 		c.EmitError(iris.StatusInternalServerError)
 		return
 	}
-	err := proto.Unmarshal(body, r)
-	ioutil.WriteFile("1.log",body,os.ModeAppend)
+	err := proto.Unmarshal(body, c2s)
 
 	if err != nil {
-		utils.Logger.Error("Unmarshal",zap.String("unmarshal error",err.Error()),zap.Int("len",len(body)))
 		c.EmitError(iris.StatusPreconditionFailed)
 		return
 	}
 	rc := pb.NewRegisterClient(conn)
-	res, err := rc.Register(context.Background(), &pb.RegisterReq{PhoneNumber:r.PhoneNumber, Password:r.Password})
-	utils.Logger.Info("res", zap.Int("int", int(res.ErrCode)))
+	res, err := rc.Register(context.Background(), c2s)
+	utils.PrintErr(err)
 	buf, _ := proto.Marshal(res)
 	c.Gzip(buf, 1)
 }

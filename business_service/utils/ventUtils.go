@@ -1,12 +1,13 @@
 package utils
 
 import (
-	"github.com/uber-go/zap"
+	"github.com/jbrodriguez/mlog"
 )
 
-var Logger = zap.New(zap.NewJSONEncoder(
-	zap.RFC3339Formatter("@timestamp"),
-))
+func init(){
+	mlog.Start(mlog.LevelError,"")
+}
+
 func PanicErr(err error){
 	if err!=nil{
 		panic(err)
@@ -16,6 +17,6 @@ func PanicErr(err error){
 
 func PrintErr(err error){
 	if err !=nil{
-		Logger.Error(err.Error())
+		mlog.Error(err)
 	}
 }

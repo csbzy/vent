@@ -10,4 +10,7 @@ message RegisterC2s{
 
 message RegisterS2c{
 	uint32 err_code =1;
+	uint64 user_id =2;
 }
+
+

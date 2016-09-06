@@ -24,7 +24,7 @@ func main(){
 	ticker:= time.NewTicker(20*time.Second)
 	for t := range ticker.C{
 		client :=pb.NewRegisterClient(conn)
-		resp,err := client.Register(context.Background(),&pb.RegisterReq{PhoneNumber:1111,Password:"11111"})
+		resp,err := client.Register(context.Background(),&pb.RegisterC2S{PhoneNumber:1111,Password:"11111"})
 
 		utils.PanicErr(err)
 
