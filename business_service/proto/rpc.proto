@@ -1,6 +1,11 @@
 syntax = "proto3";
 import "client.proto";
 package proto;
+
 service Register {
 	rpc Register(RegisterC2s) returns (RegisterS2c){}
+}
+
+service Login {
+	rpc Login(LoginC2s) returns (LoginS2c){}
 }

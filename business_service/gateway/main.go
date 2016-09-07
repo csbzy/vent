@@ -22,8 +22,9 @@ func initApi(){
 	iris.UseFunc(log)
 	userParty := iris.Party("/api/v1/user")
 	userParty.Put("/register",user.Register)
+	userParty.Post("/login",user.Login)
 	//iris.
-	iris.UseFunc(fin)
+	//iris.UseFunc(fin)
 	iris.Listen("0.0.0.0:8080")
 }
 

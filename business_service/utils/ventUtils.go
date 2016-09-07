@@ -5,7 +5,7 @@ import (
 )
 
 func init(){
-	mlog.Start(mlog.LevelError,"")
+	mlog.Start(mlog.LevelInfo,"")
 }
 
 func PanicErr(err error){

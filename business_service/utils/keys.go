@@ -5,4 +5,5 @@ const (
 	AccountPhonePrefix = "account:phone:"
 	AccountPasswordPrefix = "account:password:"
 	AccountUserList = "account:user_list"
+	AccountSessionPrefix ="account:session:"
 )
