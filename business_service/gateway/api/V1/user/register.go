@@ -14,20 +14,24 @@ import (
 func Register(c *iris.Context) {
 	body := c.PostBody()
 	c2s := &pb.RegisterC2S{}
+	s2c := &pb.RegisterS2C{}
+
+	err := proto.Unmarshal(body, c2s)
+	if err != nil {
+		s2c.ErrCode = utils.ErrParams
+		utils.SetBody(c,s2c)
+		return
+	}
+
 	conn := rpclient.Get("registerService")
 	if conn == nil {
-		c.EmitError(iris.StatusInternalServerError)
+		s2c.ErrCode = utils.ErrServer
+		utils.SetBody(c,s2c)
 		return
 	}
-	err := proto.Unmarshal(body, c2s)
 
-	if err != nil {
-		c.EmitError(iris.StatusPreconditionFailed)
-		return
-	}
 	rc := pb.NewRegisterClient(conn)
-	res, err := rc.Register(context.Background(), c2s)
+	s2c, err = rc.Register(context.Background(), c2s)
 	utils.PrintErr(err)
-	buf, _ := proto.Marshal(res)
-	c.Gzip(buf, 1)
+	utils.SetBody(c,s2c)
 }

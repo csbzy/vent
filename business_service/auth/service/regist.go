@@ -60,6 +60,20 @@ func (s *Service) Register(ctx context.Context ,req *pb.RegisterC2S)(*pb.Registe
 		return res,nil
 	}
 	s.Redisc.Expire(sessionKey,utils.DaySecond)
+
+
+	//user info key
+	userInfoKey := utils.UserInfoHashPrefix + userIDStr
+
+	//init register user info
+	err = s.Redisc.Hset(userInfoKey,"sex",req.Sex)
+	err = s.Redisc.Hset(userInfoKey,"nickname",req.PhoneNumber)
+	err = s.Redisc.Hset(userInfoKey,"city","深圳")
+	err = s.Redisc.Hset(userInfoKey,"signature","今天天气真好")
+	if err !=nil {
+		res.ErrCode = utils.ErrServer
+		return res,nil
+	}
 	res.ErrCode =0
 	res.UserId = uint64(userID)
 	res.Session= sessionStr

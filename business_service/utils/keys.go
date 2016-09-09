@@ -6,4 +6,6 @@ const (
 	AccountPasswordPrefix = "account:password:"
 	AccountUserList = "account:user_list"
 	AccountSessionPrefix ="account:session:"
+
+	UserInfoHashPrefix = "user:info:"
 )

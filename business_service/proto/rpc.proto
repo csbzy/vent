@@ -9,3 +9,8 @@ service Register {
 service Login {
 	rpc Login(LoginC2s) returns (LoginS2c){}
 }
+
+service UserInfoManager{
+	rpc UserInfoModify(UserInfoModifyC2S) returns (UserInfoModifyS2C) {}
+	rpc UserInfoGet(UserInfoGetC2S) returns (UserInfoGetS2C){}
+}

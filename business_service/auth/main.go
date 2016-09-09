@@ -45,6 +45,7 @@ func main(){
 	authSer := &authService.Service{Redisc:rdc}
 	pb.RegisterRegisterServer(s,authSer)
 	pb.RegisterLoginServer(s,authSer)
+	pb.RegisterUserInfoManagerServer(s,authSer)
 	mlog.Info("start auth service ok.")
 	s.Serve(lis)
 }

@@ -21,16 +21,18 @@ func main(){
 func initApi(){
 	iris.UseFunc(log)
 	userParty := iris.Party("/api/v1/user")
-	userParty.Put("/register",user.Register)
-	userParty.Post("/login",user.Login)
+	userParty.Post("/register",user.Register)
+	userParty.Put("/login",user.Login)
+	userParty.Put("/info",user.InfoModify)
+	userParty.Get("/info/:userID",user.InfoGet)
 	//iris.
-	//iris.UseFunc(fin)
+	iris.UseFunc(fin)
 	iris.Listen("0.0.0.0:8080")
 }
 
 
 func log(ctx *iris.Context){
-	mlog.Info("request:%v,params:%v",string(ctx.Path()),string(ctx.PostBody()))
+	mlog.Info("request:%v,params: %v",string(ctx.Path()),string(ctx.PostBody()))
 	ctx.Next()
 }
 
