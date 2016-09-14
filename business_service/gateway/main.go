@@ -6,6 +6,7 @@ import(
 	"flag"
 	"github.com/chenshaobo/vent/business_service/rpclient"
 	"github.com/jbrodriguez/mlog"
+	"github.com/chenshaobo/vent/business_service/gateway/api/V1/signal"
 )
 
 var (
@@ -19,16 +20,17 @@ func main(){
 }
 
 func initApi(){
-	iris.UseFunc(log)
-	userParty := iris.Party("/api/v1/user")
-	userParty.Post("/register",user.Register)
-	userParty.Put("/login",user.Login)
-	userParty.Put("/info",user.InfoModify)
-	userParty.Get("/info/:userID",user.InfoGet)
+	//iris.UseFunc(log)
 	//iris.
-	iris.UseFunc(fin)
+	//user api
+
+	user.SetupUserApi()
+	signal.SetupSignalApi()
+	///iris.UseFunc(fin)
+	iris.AddServer(iris.ServerConfiguration{ListeningAddr: ":443", CertFile: "server.crt", KeyFile: "server.key"}) // you can close this server with .Close()
 	iris.Listen("0.0.0.0:8080")
 }
+
 
 
 func log(ctx *iris.Context){

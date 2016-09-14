@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kataras/go-websocket"
 	"github.com/kataras/iris/context"
 	"github.com/valyala/fasthttp"
 )
@@ -96,8 +97,8 @@ type Upgrader struct {
 	// must match the host of the request.
 	CheckOrigin func(ctx context.IContext) bool
 
-	//Receiver it's the receiver handler, acceps a *websocket.Conn
-	Receiver func(*Conn)
+	//Receiver it's the receiver handler, acceps a kataras/go-websocket.UnderlineConnection
+	Receiver func(websocket.UnderlineConnection)
 
 	// Headers  if true then the client's headers are copy to the websocket connection
 	Headers bool
@@ -340,7 +341,7 @@ func (u *Upgrader) Upgrade(ctx context.IContext) error {
 // If the request is not a valid WebSocket handshake, then Upgrade returns an
 // error of type HandshakeError. Applications should handle this error by
 // replying to the client with an HTTP error response.
-func Upgrade(ctx context.IContext, receiverHandler func(*Conn), readBufSize, writeBufSize int) error {
+func Upgrade(ctx context.IContext, receiverHandler func(websocket.UnderlineConnection), readBufSize, writeBufSize int) error {
 	u := Upgrader{ReadBufferSize: readBufSize, WriteBufferSize: writeBufSize, Receiver: receiverHandler}
 	u.Error = func(ctx context.IContext, status int, reason error) {
 		// don't return errors to maintain backwards compatibility
@@ -357,7 +358,7 @@ func Upgrade(ctx context.IContext, receiverHandler func(*Conn), readBufSize, wri
 // first parameter is the receiver, think it like a handler which accepts a *websocket.Conn (func *websocket.Conn)
 // second parameter is the readBufSize (int)
 // third parameter is the writeBufSize (int)
-func Custom(receiverHandler func(*Conn), readBufSize, writeBufSize int, copyheaders bool) Upgrader {
+func Custom(receiverHandler func(websocket.UnderlineConnection), readBufSize, writeBufSize int, copyheaders bool) Upgrader {
 	u := Upgrader{ReadBufferSize: readBufSize, WriteBufferSize: writeBufSize, Receiver: receiverHandler, Headers: copyheaders}
 	u.Error = func(ctx context.IContext, status int, reason error) {
 		// don't return errors to maintain backwards compatibility
@@ -372,7 +373,7 @@ func Custom(receiverHandler func(*Conn), readBufSize, writeBufSize int, copyhead
 // New returns an Upgrader with the default options
 // accepts one parameter
 // the receiver, think it like a handler which accepts a *websocket.Conn (func *websocket.Conn)
-func New(receiverHandler func(*Conn)) Upgrader {
+func New(receiverHandler func(websocket.UnderlineConnection)) Upgrader {
 	return Custom(receiverHandler, 4096, 4096, true)
 }
 

@@ -3,7 +3,7 @@
 The iris-conrib/websocket package has been converted from the [gorilla/websocket](https://github.com/gorilla/websocket) (in order to make it work with Iris).
 
 
-If you need more, use the high [high level iris-ws](https://github.com/kataras/iris/tree/master/websocket), I recommend you use that instead.
+If you need more, use the high [high level iris-ws](https://github.com/kataras/iris/blob/master/websocket.go), I recommend you use that instead, you can read its docs [here](https://kataras.gitbooks.io/iris/content/package-websocket.html).
 
 
 # Websockets

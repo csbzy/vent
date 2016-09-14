@@ -3,10 +3,10 @@ package iris
 import (
 	"sync"
 
-	"github.com/iris-contrib/errors"
+	"log"
 
-	"github.com/iris-contrib/logger"
-	"github.com/kataras/iris/utils"
+	"github.com/kataras/go-errors"
+	"github.com/kataras/go-fs"
 )
 
 var (
@@ -123,14 +123,11 @@ type (
 		DoPreClose(*Framework)
 		PreDownload(PreDownloadFunc)
 		DoPreDownload(Plugin, string)
-		// custom event callbacks
-		On(string, ...func())
-		Call(string)
 		//
 		GetAll() []Plugin
 		// GetDownloader is the only one module that is used and fire listeners at the same time in this file
 		GetDownloader() PluginDownloadManager
-	}
+	} //Note: custom event callbacks, never used internaly by Iris, but if you need them use this: github.com/kataras/go-events
 	// PluginDownloadManager is the interface which the DownloadManager should implements
 	PluginDownloadManager interface {
 		DirectoryExists(string) bool
@@ -199,27 +196,27 @@ var _ PluginContainer = &pluginContainer{}
 
 // DirectoryExists returns true if a given local directory exists
 func (d *pluginDownloadManager) DirectoryExists(dir string) bool {
-	return utils.DirectoryExists(dir)
+	return fs.DirectoryExists(dir)
 }
 
 // DownloadZip downlodas a zip to the given local path location
 func (d *pluginDownloadManager) DownloadZip(zipURL string, targetDir string) (string, error) {
-	return utils.DownloadZip(zipURL, targetDir)
+	return fs.DownloadZip(zipURL, targetDir, true)
 }
 
 // Unzip unzips a zip to the given local path location
 func (d *pluginDownloadManager) Unzip(archive string, target string) (string, error) {
-	return utils.Unzip(archive, target)
+	return fs.DownloadZip(archive, target, true)
 }
 
 // Remove deletes/removes/rm a file
 func (d *pluginDownloadManager) Remove(filePath string) error {
-	return utils.RemoveFile(filePath)
+	return fs.RemoveFile(filePath)
 }
 
 // Install is just the flow of the: DownloadZip->Unzip->Remove the zip
 func (d *pluginDownloadManager) Install(remoteFileZip string, targetDirectory string) (string, error) {
-	return utils.Install(remoteFileZip, targetDirectory)
+	return fs.Install(remoteFileZip, targetDirectory, true)
 }
 
 // pluginContainer is the base container of all Iris, registed plugins
@@ -227,8 +224,13 @@ type pluginContainer struct {
 	activatedPlugins []Plugin
 	customEvents     map[string][]func()
 	downloader       *pluginDownloadManager
-	logger           *logger.Logger
+	logger           *log.Logger
 	mu               sync.Mutex
+}
+
+// newPluginContainer receives a logger and returns a new PluginContainer
+func newPluginContainer(l *log.Logger) PluginContainer {
+	return &pluginContainer{logger: l}
 }
 
 // Add activates the plugins and if succeed then adds it to the activated plugins list
@@ -248,7 +250,8 @@ func (p *pluginContainer) Add(plugins ...Plugin) error {
 		}
 		// Activate the plugin, if no error then add it to the plugins
 		if pluginObj, ok := plugin.(pluginActivate); ok {
-			tempPluginContainer := *p
+
+			tempPluginContainer := *p // contains the mutex but we' re safe here.
 			err := pluginObj.Activate(&tempPluginContainer)
 			if err != nil {
 				return errPluginActivate.Format(pName, err.Error())
@@ -274,12 +277,12 @@ func (p *pluginContainer) Reset() {
 // This doesn't calls the PreClose method
 func (p *pluginContainer) Remove(pluginName string) error {
 	if p.activatedPlugins == nil {
-		return errPluginRemoveNoPlugins.Return()
+		return errPluginRemoveNoPlugins
 	}
 
 	if pluginName == "" {
 		//return error: cannot delete an unamed plugin
-		return errPluginRemoveEmptyName.Return()
+		return errPluginRemoveEmptyName
 	}
 
 	indexToRemove := -1
@@ -289,7 +292,7 @@ func (p *pluginContainer) Remove(pluginName string) error {
 		}
 	}
 	if indexToRemove == -1 { //if index stills -1 then no plugin was found with this name, just return an error. it is not a critical error.
-		return errPluginRemoveNotFound.Return()
+		return errPluginRemoveNotFound
 	}
 
 	p.activatedPlugins = append(p.activatedPlugins[:indexToRemove], p.activatedPlugins[indexToRemove+1:]...)
@@ -446,30 +449,5 @@ func (p *pluginContainer) DoPreDownload(pluginTryToDownload Plugin, downloadURL 
 		if pluginObj, ok := p.activatedPlugins[i].(pluginPreDownload); ok {
 			pluginObj.PreDownload(pluginTryToDownload, downloadURL)
 		}
-	}
-}
-
-// On registers a custom event
-// these are not registed as plugins, they are hidden events
-func (p *pluginContainer) On(name string, fns ...func()) {
-	if p.customEvents == nil {
-		p.customEvents = make(map[string][]func(), 0)
-	}
-	if p.customEvents[name] == nil {
-		p.customEvents[name] = make([]func(), 0)
-	}
-	p.customEvents[name] = append(p.customEvents[name], fns...)
-}
-
-// Call fires the custom event
-func (p *pluginContainer) Call(name string) {
-	if p.customEvents == nil {
-		return
-	}
-	if fns := p.customEvents[name]; fns != nil {
-		for _, fn := range fns {
-			fn()
-		}
-
 	}
 }

@@ -2,10 +2,10 @@ package context
 
 import (
 	"bufio"
+	"github.com/kataras/go-sessions"
+	"github.com/valyala/fasthttp"
 	"io"
 	"time"
-
-	"github.com/valyala/fasthttp"
 )
 
 type (
@@ -30,6 +30,9 @@ type (
 		RequestHeader(k string) string
 		FormValueString(string) string
 		FormValues(string) []string
+		PostValuesAll() map[string][]string
+		PostValues(name string) []string
+		PostValue(name string) string
 		SetStatusCode(int)
 		SetContentType(string)
 		SetHeader(string, string)
@@ -53,7 +56,7 @@ type (
 		XML(int, interface{}) error
 		ServeContent(io.ReadSeeker, string, time.Time, bool) error
 		ServeFile(string, bool) error
-		SendFile(string, string) error
+		SendFile(string, string)
 		Stream(func(*bufio.Writer))
 		StreamWriter(cb func(*bufio.Writer))
 		StreamReader(io.Reader, int)
@@ -71,22 +74,10 @@ type (
 		GetFlashes() map[string]string
 		GetFlash(string) (string, error)
 		SetFlash(string, string)
-		Session() interface {
-			ID() string
-			Get(string) interface{}
-			GetString(key string) string
-			GetInt(key string) int
-			GetAll() map[string]interface{}
-			VisitAll(cb func(k string, v interface{}))
-			Set(string, interface{})
-			Delete(string)
-			Clear()
-		}
+		Session() sessions.Session
 		SessionDestroy()
 		Log(string, ...interface{})
-		Reset(*fasthttp.RequestCtx)
 		GetRequestCtx() *fasthttp.RequestCtx
-		Clone() IContext
 		Do()
 		Next()
 		StopExecution()

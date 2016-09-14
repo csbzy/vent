@@ -3,7 +3,6 @@ package httpexpect
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/ajg/form"
 	"io/ioutil"
 	"mime"
 	"net/http"
@@ -12,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/ajg/form"
 )
 
 // StatusRange is enum for response status ranges.
@@ -398,7 +399,7 @@ func (r *Response) getJSON() interface{} {
 // of response.
 //
 // JSONP succeedes if response contains "application/javascript" Content-Type
-// header with empty or "utf-8" charset and reponse body of the following form:
+// header with empty or "utf-8" charset and response body of the following form:
 //  callback(<valid json>);
 // or:
 //  callback(<valid json>)

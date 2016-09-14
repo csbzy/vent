@@ -66,11 +66,11 @@
 package httpexpect
 
 import (
-	"golang.org/x/net/publicsuffix"
 	"net/http"
 	"net/http/cookiejar"
-	"testing"
 	"time"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 // Expect is a toplevel object that contains user Config and allows
@@ -98,7 +98,7 @@ type Config struct {
 	// Should not be nil.
 	//
 	// You can use AssertReporter, RequireReporter (they use testify),
-	// or testing.T, or provide custom implementation.
+	// or testing.TB, or provide custom implementation.
 	Reporter Reporter
 
 	// Printers are used to print requests and responses.
@@ -109,7 +109,7 @@ type Config struct {
 	//
 	// You can also use builtin printers with alternative Logger if
 	// you're happy with their format, but want to send logs somewhere
-	// else instead of testing.T.
+	// else instead of testing.TB.
 	Printers []Printer
 }
 
@@ -131,19 +131,25 @@ type Printer interface {
 }
 
 // Logger is used as output backend for Printer.
-// testing.T implements this interface.
+// testing.TB implements this interface.
 type Logger interface {
 	// Logf writes message to log.
 	Logf(fmt string, args ...interface{})
 }
 
 // Reporter is used to report failures.
-// testing.T implements this interface. AssertReporter and RequireReporter,
+// testing.TB implements this interface. AssertReporter and RequireReporter,
 // also implement this interface using testify.
 type Reporter interface {
 	// Errorf reports failure.
 	// Allowed to return normally or terminate test using t.FailNow().
 	Errorf(message string, args ...interface{})
+}
+
+// LoggerReporter combines Logger and Reporter interfaces.
+type LoggerReporter interface {
+	Logger
+	Reporter
 }
 
 // New returns a new Expect object.
@@ -152,7 +158,7 @@ type Reporter interface {
 // trailing slash is allowed but not required and is appended automatically.
 //
 // New is a shorthand for WithConfig. It uses:
-//  - CompactPrinter as Printer with testing.T as Logger
+//  - CompactPrinter as Printer with testing.TB as Logger
 //  - AssertReporter as Reporter
 //
 // Client is set to default client with non-nil Jar:
@@ -168,7 +174,7 @@ type Reporter interface {
 //          Expect().
 //          Status(http.StatusOK)
 //  }
-func New(t *testing.T, baseURL string) *Expect {
+func New(t LoggerReporter, baseURL string) *Expect {
 	return WithConfig(Config{
 		BaseURL:  baseURL,
 		Reporter: NewAssertReporter(t),
