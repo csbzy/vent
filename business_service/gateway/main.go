@@ -20,7 +20,7 @@ func main(){
 }
 
 func initApi(){
-	//iris.UseFunc(log)
+	iris.UseFunc(log)
 	//iris.
 	//user api
 

@@ -77,8 +77,8 @@ import (
 )
 
 const (
-	// Version of the iris
-	Version = "4.2.2"
+	// Version is the current version of the Iris web framework
+	Version = "4.3.0"
 
 	banner = `         _____      _
         |_   _|    (_)
@@ -136,14 +136,17 @@ type (
 	// FrameworkAPI contains the main Iris Public API
 	FrameworkAPI interface {
 		MuxAPI
-		Must(error)
 		Set(...OptionSetter)
+		CheckForUpdates(bool)
+		Must(error)
 		AddServer(...OptionServerSettter) *Server
 		ListenTo(...OptionServerSettter) error
 		Listen(string)
 		ListenTLS(string, string, string)
 		ListenUNIX(string, os.FileMode)
 		ListenVirtual(...string) *Server
+		AcquireCtx(*fasthttp.RequestCtx) *Context
+		ReleaseCtx(*Context)
 		Go() error
 		Close() error
 		UseSessionDB(sessions.Database)
@@ -166,6 +169,11 @@ type (
 	// Implements the FrameworkAPI
 	Framework struct {
 		*muxAPI
+		// Handler field which can change the default iris' mux behavior
+		// if you want to get benefit with iris' context make use of:
+		// ctx:= iris.AcquireCtx(*fasthttp.RequestCtx) to get the context at the beginning of your handler
+		// iris.ReleaseCtx(ctx) to release/put the context to the pool, at the very end of your custom handler.
+		Handler     fasthttp.RequestHandler
 		contextPool sync.Pool
 		Config      *Configuration
 		sessions    sessions.Sessions
@@ -230,33 +238,16 @@ func New(setters ...OptionSetter) *Framework {
 		// set the servemux, which will provide us the public API also, with its context pool
 		mux := newServeMux(s.Logger)
 		mux.onLookup = s.Plugins.DoPreLookup
-		// set the public router API (and party)
-		s.muxAPI = &muxAPI{mux: mux, relativePath: "/"}
 		s.contextPool.New = func() interface{} {
 			return &Context{framework: s}
 		}
+		// set the public router API (and party)
+		s.muxAPI = &muxAPI{mux: mux, relativePath: "/"}
 		s.Servers = &ServerList{mux: mux, servers: make([]*Server, 0)}
 		s.Available = make(chan bool)
 	}
 
 	return s
-}
-
-// Set sets an option aka configuration field to the default iris instance
-func Set(setters ...OptionSetter) {
-	Default.Set(setters...)
-}
-
-// Set sets an option aka configuration field to this iris instance
-func (s *Framework) Set(setters ...OptionSetter) {
-	if s.Config == nil {
-		defaultConfiguration := DefaultConfiguration()
-		s.Config = &defaultConfiguration
-	}
-
-	for _, setter := range setters {
-		setter.Set(s.Config)
-	}
 }
 
 func (s *Framework) initialize() {
@@ -291,6 +282,7 @@ func (s *Framework) initialize() {
 	//  prepare the mux & the server
 	s.mux.setCorrectPath(!s.Config.DisablePathCorrection)
 	s.mux.setEscapePath(!s.Config.DisablePathEscape)
+
 	// set the debug profiling handlers if ProfilePath is setted
 	if debugPath := s.Config.ProfilePath; debugPath != "" {
 		s.Handle(MethodGet, debugPath+"/*action", profileMiddleware(debugPath)...)
@@ -300,6 +292,45 @@ func (s *Framework) initialize() {
 	if s.SSH != nil && s.SSH.Enabled() {
 		s.SSH.bindTo(s)
 	}
+
+	// updates, to cover the default station's irs.Config.checkForUpdates
+	// note: we could use the IsDevelopment configuration field to do that BUT
+	// the developer may want to check for updates without, for example, re-build template files (comes from IsDevelopment) on each request
+	if s.Config.CheckForUpdatesSync {
+		s.CheckForUpdates(false)
+	} else if s.Config.CheckForUpdates {
+		go s.CheckForUpdates(false)
+	}
+
+}
+
+// AcquireCtx gets an Iris' Context from pool
+// see iris.Handler & ReleaseCtx, Go()
+func AcquireCtx(reqCtx *fasthttp.RequestCtx) *Context {
+	return Default.AcquireCtx(reqCtx)
+}
+
+// ReleaseCtx puts the Iris' Context back to the pool in order to be re-used
+// see iris.Handler & AcquireCtx, Go()
+func ReleaseCtx(ctx *Context) {
+	Default.ReleaseCtx(ctx)
+}
+
+// AcquireCtx gets an Iris' Context from pool
+// see iris.Handler & ReleaseCtx, Go()
+func (s *Framework) AcquireCtx(reqCtx *fasthttp.RequestCtx) *Context {
+	ctx := s.contextPool.Get().(*Context) // Changed to use the pool's New 09/07/2016, ~ -4k nanoseconds(9 bench tests) per requests (better performance)
+	ctx.RequestCtx = reqCtx
+	return ctx
+}
+
+// ReleaseCtx puts the Iris' Context back to the pool in order to be re-used
+// see iris.Handler & AcquireCtx, Go()
+func (s *Framework) ReleaseCtx(ctx *Context) {
+	ctx.Params = ctx.Params[0:0]
+	ctx.middleware = nil
+	ctx.session = nil
+	s.contextPool.Put(ctx)
 }
 
 // Go starts the iris station, listens to all registered servers, and prepare only if Virtual
@@ -311,20 +342,21 @@ func Go() error {
 func (s *Framework) Go() error {
 	s.initialize()
 	s.Plugins.DoPreListen(s)
-	// build the fasthttp handler to bind it to the servers
-	h := s.mux.Handler()
-	reqHandler := func(reqCtx *fasthttp.RequestCtx) {
-		ctx := s.contextPool.Get().(*Context) // Changed to use the pool's New 09/07/2016, ~ -4k nanoseconds(9 bench tests) per requests (better performance)
-		ctx.RequestCtx = reqCtx
 
-		h(ctx)
+	if s.Handler == nil { // use the 'h' which is the default mux' handler
+		// build and get the default mux' handler(*Context)
+		serve := s.mux.BuildHandler()
+		// build the fasthttp handler to bind it to the servers
+		defaultHandler := func(reqCtx *fasthttp.RequestCtx) {
+			ctx := s.AcquireCtx(reqCtx)
+			serve(ctx)
+			s.ReleaseCtx(ctx)
+		}
 
-		ctx.Params = ctx.Params[0:0]
-		ctx.middleware = nil
-		ctx.session = nil
-		s.contextPool.Put(ctx)
+		s.Handler = defaultHandler
 	}
-	if firstErr := s.Servers.OpenAll(reqHandler); firstErr != nil {
+
+	if firstErr := s.Servers.OpenAll(s.Handler); firstErr != nil {
 		return firstErr
 	}
 
@@ -353,6 +385,78 @@ func (s *Framework) Go() error {
 	s.Close() // btw, don't panic here
 
 	return nil
+}
+
+// Set sets an option aka configuration field to the default iris instance
+func Set(setters ...OptionSetter) {
+	Default.Set(setters...)
+}
+
+// Set sets an option aka configuration field to this iris instance
+func (s *Framework) Set(setters ...OptionSetter) {
+	if s.Config == nil {
+		defaultConfiguration := DefaultConfiguration()
+		s.Config = &defaultConfiguration
+	}
+
+	for _, setter := range setters {
+		setter.Set(s.Config)
+	}
+}
+
+// global once because is not necessary to check for updates on more than one iris station*
+var updateOnce sync.Once
+
+const (
+	githubOwner = "kataras"
+	githubRepo  = "iris"
+)
+
+// CheckForUpdates will try to search for newer version of Iris based on the https://github.com/kataras/iris/releases
+// If a newer version found then the app will ask the he dev/user if want to update the 'x' version
+// if 'y' is pressed then the updater will try to install the latest version
+// the updater, will notify the dev/user that the update is finished and should restart the App manually.
+func CheckForUpdates(force bool) {
+	Default.CheckForUpdates(force)
+}
+
+// CheckForUpdates will try to search for newer version of Iris based on the https://github.com/kataras/iris/releases
+// If a newer version found then the app will ask the he dev/user if want to update the 'x' version
+// if 'y' is pressed then the updater will try to install the latest version
+// the updater, will notify the dev/user that the update is finished and should restart the App manually.
+// Note: exported func CheckForUpdates exists because of the reason that an update can be executed while Iris is running
+func (s *Framework) CheckForUpdates(force bool) {
+	updated := false
+	checker := func() {
+		writer := s.Config.LoggerOut
+
+		if writer == nil {
+			writer = os.Stdout // we need a writer because the update process will not be silent.
+		}
+
+		fs.DefaultUpdaterAlreadyInstalledMessage = "INFO: Running with the latest version(%s)\n"
+		updater, err := fs.GetUpdater(githubOwner, githubRepo, Version)
+
+		if err != nil {
+			writer.Write([]byte("Update failed: " + err.Error()))
+		}
+
+		updated = updater.Run(fs.Stdout(writer), fs.Stderr(writer), fs.Silent(false))
+	}
+
+	if force {
+		checker()
+	} else {
+		updateOnce.Do(checker)
+	}
+
+	if updated { // if updated, then do not run the web server
+		if s.Logger != nil {
+			s.Logger.Println("exiting now...")
+		}
+		os.Exit(0)
+	}
+
 }
 
 // Must panics on error, it panics on registed iris' logger

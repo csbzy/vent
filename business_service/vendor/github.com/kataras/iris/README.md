@@ -3,7 +3,7 @@
 
  <a href="https://www.gitbook.com/book/kataras/iris/details"><img  width="600" src="https://raw.githubusercontent.com/iris-contrib/website/gh-pages/assets/book/cover_6_flat_alpha.png"></a>
 
-<br/><br/>
+<br/>
 
 <a href="https://travis-ci.org/kataras/iris"><img src="https://img.shields.io/travis/kataras/iris.svg?style=flat-square" alt="Build Status"></a>
 
@@ -11,14 +11,15 @@
 
 <a href="#"><img src="https://img.shields.io/badge/platform-Any-ec2eb4.svg?style=flat-square" alt="Platforms"></a>
 
-<a href="https://github.com/kataras/iris/blob/master/LICENSE"><img src="https://img.shields.io/badge/%20license-MIT-E91E63.svg?style=flat-square" alt="License"></a>
+<a href="https://github.com/kataras/iris/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0%20%20-E91E63.svg?style=flat-square" alt="License"></a>
+
 
 <a href="https://golang.org"><img src="https://img.shields.io/badge/powered_by-Go-3362c2.svg?style=flat-square" alt="Built with GoLang"></a>
 
 <br/>
 
 
-<a href="https://github.com/kataras/iris/releases"><img src="https://img.shields.io/badge/%20version%20-%204.2.2%20-blue.svg?style=flat-square" alt="Releases"></a>
+<a href="https://github.com/kataras/iris/releases"><img src="https://img.shields.io/badge/%20version%20-%204.3.0%20-blue.svg?style=flat-square" alt="Releases"></a>
 
 <a href="https://github.com/iris-contrib/examples"><img src="https://img.shields.io/badge/%20examples-repository-3362c2.svg?style=flat-square" alt="Examples"></a>
 
@@ -27,15 +28,21 @@
 <a href="https://kataras.rocket.chat/channel/iris"><img src="https://img.shields.io/badge/%20community-chat-00BCD4.svg?style=flat-square" alt="Chat"></a><br/><br/>
 
 
-The <a href="https://github.com/kataras/iris#benchmarks">fastest</a> backend web framework for Go. Easy to <a href="https://www.gitbook.com/book/kataras/iris/details">learn</a>,  while it's highly customizable. <br/>
+The <a href="https://github.com/kataras/iris#benchmarks">fastest</a> backend web framework for Go.
+<br/>
+Easy to <a href="https://www.gitbook.com/book/kataras/iris/details">learn</a>,  while it's highly customizable. <br/>
 Ideally suited for both experienced and novice <b>Developers</b>.
 <br/>
+<br/>
+
+<img src="https://raw.githubusercontent.com/smallnest/go-web-framework-benchmark/4db507a22c964c9bc9774c5b31afdc199a0fe8b7/benchmark.png" href="#benchmarks" alt="Benchmark Wizzard July 21, 2016- Processing Time Horizontal Graph" />
 
 </p>
 
 
 
-Quick look
+
+Quick Look
 ------------
 
 ```go
@@ -44,24 +51,38 @@ package main
 import "github.com/kataras/iris"
 
 func main() {
-	iris.Favicon("./favicon.ico")
+  // serve static files, just a fav here
+  iris.Favicon("./favicon.ico")
 
-	iris.Get("/", func(ctx *iris.Context) {
-		ctx.Render("index.html")
-	})
+  // handle "/" - HTTP METHOD: "GET"
+  iris.Get("/", func(ctx *iris.Context) {
+    ctx.Render("index.html")
+  })
 
-	iris.Get("/login", func(ctx *iris.Context) {
-		ctx.Render("login.html", iris.Map{"Title": "Login Page"})
-	})
+  iris.Get("/login", func(ctx *iris.Context) {
+    ctx.Render("login.html", iris.Map{"Title": "Login Page"})
+  })
 
-	iris.Post("/login", func(ctx *iris.Context) {
-		secret := ctx.PostValue("secret")
-		ctx.Session().Set("secret", secret)
+  // handle "/login" - HTTP METHOD: "POST"
+  iris.Post("/login", func(ctx *iris.Context) {
+    secret := ctx.PostValue("secret")
+    ctx.Session().Set("secret", secret)
 
-		ctx.Redirect("/user")
-	})
+    ctx.Redirect("/user")
+  })
 
-	iris.Listen(":8080")
+  // handle websocket connections
+  iris.Config.Websocket.Endpoint = "/mychat"
+  iris.Websocket.OnConnection(func(c iris.WebsocketConnection) {
+    c.Join("myroom")
+
+    c.On("chat", func(message string){
+      c.To("myroom").Emit("chat", "From "+c.ID()+": "+message)
+    })
+  })
+
+  // serve requests at http://localhost:8080
+  iris.Listen(":8080")
 }
 ```
 
@@ -178,7 +199,7 @@ I recommend writing your API tests using this new library, [httpexpect](https://
 Versioning
 ------------
 
-Current: **v4.2.2**
+Current: **v4.3.0**
 
 >  Iris is an active project
 
@@ -192,7 +213,7 @@ Todo
 ------------
 - [x] Use of the standard `log.Logger` instead of the `iris-contrib/logger`(colorful logger), make these changes to all middleware, examples and plugins.
 - [x] Implement, even, a better way to manage configuration/options, devs will be able to set their own custom options inside there. ` I'm thinking of something the last days, but it will have breaking changes. `
-- [ ] Implement an internal updater, as requested [here](https://github.com/kataras/iris/issues/401).
+- [x] Implement an internal updater, as requested [here](https://github.com/kataras/iris/issues/401).
 
 Iris is a **Community-Driven** Project, waiting for your suggestions and [feature requests](https://github.com/kataras/iris/issues?utf8=%E2%9C%93&q=label%3A%22feature%20request%22)!
 
@@ -213,15 +234,15 @@ If you are interested in contributing to the Iris project, please see the docume
 License
 ------------
 
-This project is licensed under the MIT License.
+This project is licensed under the Apache License, Version 2.0.
 
 License can be found [here](LICENSE).
 
 [Travis Widget]: https://img.shields.io/travis/kataras/iris.svg?style=flat-square
 [Travis]: http://travis-ci.org/kataras/iris
-[License Widget]: https://img.shields.io/badge/license-MIT%20%20License%20-E91E63.svg?style=flat-square
+[License Widget]: https://img.shields.io/badge/license-Apache%202.0%20%20-E91E63.svg?style=flat-square
 [License]: https://github.com/kataras/iris/blob/master/LICENSE
-[Release Widget]: https://img.shields.io/badge/release-v4.2.2-blue.svg?style=flat-square
+[Release Widget]: https://img.shields.io/badge/release-v4.3.0-blue.svg?style=flat-square
 [Release]: https://github.com/kataras/iris/releases
 [Chat Widget]: https://img.shields.io/badge/community-chat-00BCD4.svg?style=flat-square
 [Chat]: https://kataras.rocket.chat/channel/iris

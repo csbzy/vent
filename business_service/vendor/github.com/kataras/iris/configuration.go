@@ -41,6 +41,31 @@ func (o OptionSet) Set(c *Configuration) {
 //
 // Configuration is also implements the OptionSet so it's a valid option itself, this is briliant enough
 type Configuration struct {
+	// CheckForUpdates will try to search for newer version of Iris based on the https://github.com/kataras/iris/releases
+	// If a newer version found then the app will ask the he dev/user if want to update the 'x' version
+	// if 'y' is pressed then the updater will try to install the latest version
+	// the updater, will notify the dev/user that the update is finished and should restart the App manually.
+	// Notes:
+	// 1. Experimental feature
+	// 2. If setted to true, the app will start the server normally and runs the updater in its own goroutine,
+	//    for a sync operation see CheckForUpdatesSync.
+	// 3. If you as developer edited the $GOPATH/src/github/kataras or any other Iris' Go dependencies at the past
+	//    then the update process will fail.
+	//
+	// Usage: iris.Set(iris.OptionCheckForUpdates(true)) or
+	//        iris.Config.CheckForUpdates = true or
+	//        app := iris.New(iris.OptionCheckForUpdates(true))
+	// Default is false
+	CheckForUpdates bool
+	// CheckForUpdatesSync checks for updates before server starts, it will have a little delay depends on the machine's download's speed
+	// See CheckForUpdates for more
+	// Notes:
+	// 1. you could use the CheckForUpdatesSync while CheckForUpdates is false, set this or CheckForUpdates to true not both
+	// 2. if both CheckForUpdates and CheckForUpdatesSync are setted to true then the updater will run in sync mode, before server server starts.
+	//
+	// Default is false
+	CheckForUpdatesSync bool
+
 	// DisablePathCorrection corrects and redirects the requested path to the registed path
 	// for example, if /home/ path is requested but no handler for this Route found,
 	// then the Router checks if /home handler exists, if yes,
@@ -151,6 +176,39 @@ func (c Configuration) Set(main *Configuration) {
 
 // All options starts with "Option" preffix in order to be easier to find what dev searching for
 var (
+	// OptionCheckForUpdates will try to search for newer version of Iris based on the https://github.com/kataras/iris/releases
+	// If a newer version found then the app will ask the he dev/user if want to update the 'x' version
+	// if 'y' is pressed then the updater will try to install the latest version
+	// the updater, will notify the dev/user that the update is finished and should restart the App manually.
+	// Notes:
+	// 1. Experimental feature
+	// 2. If setted to true, the app will have a little startup delay
+	// 3. If you as developer edited the $GOPATH/src/github/kataras or any other Iris' Go dependencies at the past
+	//    then the update process will fail.
+	//
+	// Usage: iris.Set(iris.OptionCheckForUpdates(true)) or
+	//        iris.Config.CheckForUpdates = true or
+	//        app := iris.New(iris.OptionCheckForUpdates(true))
+	// Default is false
+	OptionCheckForUpdates = func(val bool) OptionSet {
+		return func(c *Configuration) {
+			c.CheckForUpdates = val
+		}
+
+	}
+	// CheckForUpdatesSync checks for updates before server starts, it will have a little delay depends on the machine's download's speed
+	// See CheckForUpdates for more
+	// Notes:
+	// 1. you could use the CheckForUpdatesSync while CheckForUpdates is false, set this or CheckForUpdates to true not both
+	// 2. if both CheckForUpdates and CheckForUpdatesSync are setted to true then the updater will run in sync mode, before server server starts.
+	//
+	// Default is false
+	OptionCheckForUpdatesSync = func(val bool) OptionSet {
+		return func(c *Configuration) {
+			c.CheckForUpdatesSync = val
+		}
+	}
+
 	// OptionDisablePathCorrection corrects and redirects the requested path to the registed path
 	// for example, if /home/ path is requested but no handler for this Route found,
 	// then the Router checks if /home handler exists, if yes,
@@ -163,12 +221,14 @@ var (
 		}
 
 	}
+
 	// OptionDisablePathEscape when is false then its escapes the path, the named parameters (if any).
 	OptionDisablePathEscape = func(val bool) OptionSet {
 		return func(c *Configuration) {
 			c.DisablePathEscape = val
 		}
 	}
+
 	// OptionDisableBanner outputs the iris banner at startup
 	//
 	// Default is false
@@ -177,6 +237,7 @@ var (
 			c.DisableBanner = val
 		}
 	}
+
 	// OptionLoggerOut is the destination for output
 	//
 	// Default is os.Stdout
@@ -185,6 +246,7 @@ var (
 			c.LoggerOut = val
 		}
 	}
+
 	// OptionLoggerPreffix is the logger's prefix to write at beginning of each line
 	//
 	// Default is [IRIS]
@@ -193,6 +255,7 @@ var (
 			c.LoggerPreffix = val
 		}
 	}
+
 	// OptionProfilePath a the route path, set it to enable http pprof tool
 	// Default is empty, if you set it to a $path, these routes will handled:
 	OptionProfilePath = func(val string) OptionSet {
@@ -200,6 +263,7 @@ var (
 			c.ProfilePath = val
 		}
 	}
+
 	// OptionDisableTemplateEngines set to true to disable loading the default template engine (html/template) and disallow the use of iris.UseEngine
 	// Default is false
 	OptionDisableTemplateEngines = func(val bool) OptionSet {
@@ -207,6 +271,7 @@ var (
 			c.DisableTemplateEngines = val
 		}
 	}
+
 	// OptionIsDevelopment iris will act like a developer, for example
 	// If true then re-builds the templates on each request
 	// Default is false
@@ -215,12 +280,14 @@ var (
 			c.IsDevelopment = val
 		}
 	}
+
 	// OptionTimeFormat time format for any kind of datetime parsing
 	OptionTimeFormat = func(val string) OptionSet {
 		return func(c *Configuration) {
 			c.TimeFormat = val
 		}
 	}
+
 	// OptionCharset character encoding for various rendering
 	// used for templates and the rest of the responses
 	// Default is "UTF-8"
@@ -229,6 +296,7 @@ var (
 			c.Charset = val
 		}
 	}
+
 	// OptionGzip enables gzip compression on your Render actions, this includes any type of render, templates and pure/raw content
 	// If you don't want to enable it globaly, you could just use the third parameter on context.Render("myfileOrResponse", structBinding{}, iris.RenderOptions{"gzip": true})
 	// Default is false
@@ -282,6 +350,8 @@ var (
 // DefaultConfiguration returns the default configuration for an Iris station, fills the main Configuration
 func DefaultConfiguration() Configuration {
 	return Configuration{
+		CheckForUpdates:        false,
+		CheckForUpdatesSync:    false,
 		DisablePathCorrection:  DefaultDisablePathCorrection,
 		DisablePathEscape:      DefaultDisablePathEscape,
 		DisableBanner:          false,
@@ -597,6 +667,28 @@ type ServerConfiguration struct {
 	// By default response write timeout is unlimited.
 	WriteTimeout time.Duration
 
+	// Maximum number of concurrent client connections allowed per IP.
+	//
+	// By default unlimited number of concurrent connections
+	// may be established to the server from a single IP address.
+	// Usage: iris.ListenTo{iris.OptionServerListeningAddr(":8080"), iris.OptionServerMaxConnsPerIP(300)}
+	//    or: iris.ListenTo(iris.ServerConfiguration{ListeningAddr: ":8080", MaxConnsPerIP: 300})
+	// for an optional second server with a different port you can always use:
+	//        iris.AddServer(iris.ServerConfiguration{ListeningAddr: ":9090", MaxConnsPerIP: 300})
+	MaxConnsPerIP int
+
+	// Maximum number of requests served per connection.
+	//
+	// The server closes connection after the last request.
+	// 'Connection: close' header is added to the last response.
+	//
+	// By default unlimited number of requests may be served per connection.
+	// Usage: iris.ListenTo{iris.OptionServerListeningAddr(":8080"), iris.OptionServerMaxConnsPerIP(300)}
+	//    or: iris.ListenTo(iris.ServerConfiguration{ListeningAddr: ":8080", MaxRequestsPerConn:100})
+	// for an optional second server with a different port you can always use:
+	//        iris.AddServer(iris.ServerConfiguration{ListeningAddr: ":9090", MaxRequestsPerConn:100})
+	MaxRequestsPerConn int
+
 	// RedirectTo, defaults to empty, set it in order to override the station's handler and redirect all requests to this address which is of form(HOST:PORT or :PORT)
 	//
 	// NOTE: the http status is 'StatusMovedPermanently', means one-time-redirect(the browser remembers the new addr and goes to the new address without need to request something from this server
@@ -737,6 +829,28 @@ var (
 		}
 	}
 
+	// OptionServerMaxConnsPerIP Maximum number of concurrent client connections allowed per IP.
+	//
+	// By default unlimited number of concurrent connections
+	// may be established to the server from a single IP address.
+	OptionServerMaxConnsPerIP = func(val int) OptionServerSet {
+		return func(c *ServerConfiguration) {
+			c.MaxConnsPerIP = val
+		}
+	}
+
+	// OptionServerMaxRequestsPerConn Maximum number of requests served per connection.
+	//
+	// The server closes connection after the last request.
+	// 'Connection: close' header is added to the last response.
+	//
+	// By default unlimited number of requests may be served per connection.
+	OptionServerMaxRequestsPerConn = func(val int) OptionServerSet {
+		return func(c *ServerConfiguration) {
+			c.MaxRequestsPerConn = val
+		}
+	}
+
 	// RedirectTo, defaults to empty, set it in order to override the station's handler and redirect all requests to this address which is of form(HOST:PORT or :PORT)
 	//
 	// NOTE: the http status is 'StatusMovedPermanently', means one-time-redirect(the browser remembers the new addr and goes to the new address without need to request something from this server
@@ -857,6 +971,8 @@ func DefaultServerConfiguration() ServerConfiguration {
 		MaxRequestBodySize: DefaultMaxRequestBodySize,
 		ReadBufferSize:     DefaultReadBufferSize,
 		WriteBufferSize:    DefaultWriteBufferSize,
+		MaxConnsPerIP:      0,
+		MaxRequestsPerConn: 0,
 		RedirectTo:         "",
 		Virtual:            false,
 		VListeningAddr:     "",

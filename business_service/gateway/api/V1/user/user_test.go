@@ -14,6 +14,7 @@ var buf *bytes.Buffer
 func TestRegister(t *testing.T) {
 	mlog.Start(mlog.LevelInfo,"")
 	buf = bytes.NewBuffer(make([]byte,0))
+	mlog.Info("Start test")
 	d :=&pb.RegisterC2S{PhoneNumber:13502700001,Password:"13502700001",Sex:1}
 	request("POST","http://127.0.0.1:8080/api/v1/user/register",d,&pb.RegisterS2C{})
 
@@ -24,6 +25,7 @@ func TestRegister(t *testing.T) {
 	request("PUT","http://127.0.0.1:8080/api/v1/user/info",userInfoMod,&pb.UserInfoModifyS2C{})
 
 	request("GET","http://127.0.0.1:8080/api/v1/user/info/1" ,nil,&pb.UserInfoGetS2C{})
+	mlog.Info("test is ok!")
 }
 
 

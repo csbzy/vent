@@ -8,7 +8,7 @@ If you,
 
 Feel free to send **any** amount through paypal
 
-[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=makis%40ideopod%2ecom&lc=GR&item_name=Iris%20web%20framework&item_number=iriswebframeworkdonationid2016&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted&return=http://iris-go.com/assets/v4-book/iris.pdf&cancel_return=https://www.gitbook.com/book/kataras/iris/details)
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kataras2006%40hotmail%2ecom&lc=GR&item_name=Iris%20web%20framework&item_number=iriswebframeworkdonationid2016&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted&return=http://iris-go.com/assets/v4-book/iris.pdf&cancel_return=https://www.gitbook.com/book/kataras/iris/details)
 
 Benefits:
 
@@ -26,6 +26,7 @@ I'm  grateful for all the generous donations. Iris is fully funded by these dona
 
 - [Ryan Brooks](https://github.com/ryanbyyc) donated 50 EUR at May 11
 - [Juan Sebastián Suárez Valencia](https://github.com/Juanses) donated 20 EUR at September 11
+- [Bob Lee](https://github.com/li3p) donated 20 EUR at September 16
 
 > The name of the donator added after his/her permission.
 
@@ -34,4 +35,4 @@ I'm  grateful for all the generous donations. Iris is fully funded by these dona
 - 13 EUR for the domain, [iris-go.com](https://iris-go.com)
 
 
-**Available**: VAT(50) + VAT(20) - 13 = 47,45 + 18,97 - 13 = 53.42 EUR
+**Available**: VAT(50) + VAT(20) + VAT(20) - 13 = 47,45 + 18,97 + 18,61 - 13 = 72,03 EUR

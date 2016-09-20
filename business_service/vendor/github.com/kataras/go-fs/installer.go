@@ -17,53 +17,58 @@ var (
 	errFileDownload = errors.New("While downloading from %s. Trace: %s")
 )
 
-// DownloadZip downloads a zip file returns the downloaded filename and an error.
-func DownloadZip(zipURL string, newDir string, showOutputIndication bool) (string, error) {
-	var err error
-	var size int64
+// ShowIndicator shows a silly terminal indicator for a process, close of the finish channel is done here.
+func ShowIndicator(wr io.Writer, newLine bool) chan bool {
 	finish := make(chan bool)
-	defer func() {
-		finish <- true
-	}()
-
 	go func() {
-		if showOutputIndication {
-			print("\n|")
-			print("_")
-			print("|")
+		if newLine {
+			wr.Write([]byte("\n"))
 		}
+		wr.Write([]byte("|"))
+		wr.Write([]byte("_"))
+		wr.Write([]byte("|"))
 
 		for {
 			select {
 			case v := <-finish:
 				{
 					if v {
-						if showOutputIndication {
-							print("\010\010\010") //remove the loading chars
-						}
+						wr.Write([]byte("\010\010\010")) //remove the loading chars
 						close(finish)
 						return
 					}
 				}
 			default:
-				if showOutputIndication {
-					print("\010\010-")
-					time.Sleep(time.Second / 2)
-					print("\010\\")
-					time.Sleep(time.Second / 2)
-					print("\010|")
-					time.Sleep(time.Second / 2)
-					print("\010/")
-					time.Sleep(time.Second / 2)
-					print("\010-")
-					time.Sleep(time.Second / 2)
-					print("|")
-				}
-
+				wr.Write([]byte("\010\010-"))
+				time.Sleep(time.Second / 2)
+				wr.Write([]byte("\010\\"))
+				time.Sleep(time.Second / 2)
+				wr.Write([]byte("\010|"))
+				time.Sleep(time.Second / 2)
+				wr.Write([]byte("\010/"))
+				time.Sleep(time.Second / 2)
+				wr.Write([]byte("\010-"))
+				time.Sleep(time.Second / 2)
+				wr.Write([]byte("|"))
 			}
 		}
 
 	}()
+
+	return finish
+}
+
+// DownloadZip downloads a zip file returns the downloaded filename and an error.
+func DownloadZip(zipURL string, newDir string, showOutputIndication bool) (string, error) {
+	var err error
+	var size int64
+	if showOutputIndication {
+		finish := ShowIndicator(os.Stdout, true)
+
+		defer func() {
+			finish <- true
+		}()
+	}
 
 	os.MkdirAll(newDir, 0755)
 	tokens := strings.Split(zipURL, "/")
@@ -109,13 +114,6 @@ func DownloadZip(zipURL string, newDir string, showOutputIndication bool) (strin
 // the installedDirectory is empty when the installation is already done by previous time or an error happens
 func Install(remoteFileZip string, targetDirectory string, showOutputIndication bool) (installedDirectory string, err error) {
 	var zipFile string
-	/*
-		targetDirectory = filepath.ToSlash(targetDirectory)
-		if targetDirectory[len(targetDirectory)-1] != os.PathSeparator {
-			targetDirectory += PathSeparator
-		}
-	*/
-
 	zipFile, err = DownloadZip(remoteFileZip, targetDirectory, showOutputIndication)
 	if err == nil {
 		installedDirectory, err = Unzip(zipFile, targetDirectory)
@@ -175,21 +173,18 @@ func (i *Installer) Install() ([]string, error) {
 	// clear the installers's remote files
 	i.mu.Lock()
 	i.RemoteFiles = nil
-	i.mu.Unlock()
 
 	for _, remoteFileZip := range remoteFiles {
 		p, err := Install(remoteFileZip, i.InstallDir, i.Indicator)
 		if err != nil {
 			allErrors = allErrors.AppendErr(err)
 			// add back the remote file if the install of this remote file has failed
-			i.mu.Lock()
 			i.RemoteFiles = append(i.RemoteFiles, remoteFileZip)
-			i.mu.Unlock()
 		}
 
 		installedDirectories = append(installedDirectories, p)
 	}
-
+	i.mu.Unlock()
 	if !allErrors.IsAppended() {
 		return installedDirectories, nil
 	}

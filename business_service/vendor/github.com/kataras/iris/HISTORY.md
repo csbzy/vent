@@ -2,6 +2,68 @@
 
 **How to upgrade**: remove your `$GOPATH/src/github.com/kataras/iris` folder, open your command-line and execute this command: `go get -u github.com/kataras/iris`.
 
+## 4.2.7 -> 4.2.8 & 4.2.9
+
+-**External FIX**: [template syntax error causes a "template doesn't exist"](https://github.com/kataras/iris/issues/415)
+
+## 4.2.6 -> 4.2.7
+
+- **ADDED**: You are now able to use a raw fasthttp handler as the router instead of the default Iris' one. Example [here](https://github.com/iris-contrib/examples/blob/master/custom_fasthttp_router/main.go). But remember that I'm always recommending to use the Iris' default which supports subdomains, group of routes(parties), auto path correction and many other built'n features. This exists for specific users who told me that they need a feature like that inside Iris, we have no performance cost at all so that's ok to exists.
+
+## 4.2.5 -> 4.2.6
+
+- **CHANGE**: Updater (See 4.2.4 and 4.2.3) runs in its own goroutine now, unless the `iris.Config.CheckForUpdatesSync` is true.
+- **ADDED**: To align with fasthttp server's configuration, iris has these new Server Configuration's fields, which allows you to set a type of rate limit:
+```go
+// Maximum number of concurrent client connections allowed per IP.
+//
+// By default unlimited number of concurrent connections
+// may be established to the server from a single IP address.
+MaxConnsPerIP int
+
+// Maximum number of requests served per connection.
+//
+// The server closes connection after the last request.
+// 'Connection: close' header is added to the last response.
+//
+// By default unlimited number of requests may be served per connection.
+MaxRequestsPerConn int
+
+// Usage: iris.ListenTo{iris.OptionServerListeningAddr(":8080"), iris.OptionServerMaxConnsPerIP(300)}
+//    or: iris.ListenTo(iris.ServerConfiguration{ListeningAddr: ":8080", MaxConnsPerIP: 300, MaxRequestsPerConn:100})
+// for an optional second server with a different port you can always use:
+//        iris.AddServer(iris.ServerConfiguration{ListeningAddr: ":9090", MaxConnsPerIP: 300, MaxRequestsPerConn:100})
+```
+
+## 4.2.4 -> 4.2.5
+
+- **ADDED**: `iris.CheckForUpdates(force bool)` which can run the updater(look 4.2.4) at runtime too, updater is tested and worked at dev machine.
+
+## 4.2.3 -> 4.2.4
+
+- **NEW Experimental feature**: Updater with a `CheckForUpdates` [configuration](https://github.com/kataras/iris/blob/master/configuration.go) field, as requested [here](https://github.com/kataras/iris/issues/401)
+```go
+// CheckForUpdates will try to search for newer version of Iris based on the https://github.com/kataras/iris/releases
+// If a newer version found then the app will ask the he dev/user if want to update the 'x' version
+// if 'y' is pressed then the updater will try to install the latest version
+// the updater, will notify the dev/user that the update is finished and should restart the App manually.
+// Notes:
+// 1. Experimental feature
+// 2. If setted to true, the app will have a little startup delay
+// 3. If you as developer edited the $GOPATH/src/github/kataras or any other Iris' Go dependencies at the past
+//    then the update process will fail.
+//
+// Usage: iris.Set(iris.OptionCheckForUpdates(true)) or
+//        iris.Config.CheckForUpdates = true or
+//        app := iris.New(iris.OptionCheckForUpdates(true))
+// Default is false
+CheckForUpdates bool
+```
+
+## 4.2.2 -> 4.2.3
+
+- [Add IsAjax() convenience method](https://github.com/kataras/iris/issues/423)
+
 ## 4.2.1 -> 4.2.2
 
 - Fix [sessiondb issue 416](https://github.com/kataras/iris/issues/416)
