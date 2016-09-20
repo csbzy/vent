@@ -23,6 +23,9 @@ func PrintErr(err error){
 	}
 }
 
+func Info(format string, a ...interface{}) {
+	mlog.Info(format,a)
+}
 
 
 

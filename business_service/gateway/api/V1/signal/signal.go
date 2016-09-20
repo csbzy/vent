@@ -14,8 +14,8 @@ func SetupSignalApi(){
 	iris.Config.Websocket.MaxMessageSize =  1024000
 	iris.Config.Websocket.ReadBufferSize =  1024000
 	iris.Config.Websocket.WriteBufferSize = 1024000
-	iris.Config.Websocket.WriteTimeout = time.Hour
-	iris.Config.Websocket.PongTimeout = time.Hour
+	iris.Config.Websocket.WriteTimeout = time.Second * 40
+	iris.Config.Websocket.PongTimeout = time.Second *40
 	ws := iris.Websocket
 	ws.OnConnection(func(c iris.WebsocketConnection){
 		c.OnMessage(func(data []byte) {

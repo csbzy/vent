@@ -29,9 +29,10 @@ func Register(c *iris.Context) {
 		utils.SetBody(c,s2c)
 		return
 	}
-
+	utils.Info("register ")
 	rc := pb.NewRegisterClient(conn)
 	s2c, err = rc.Register(context.Background(), c2s)
+	utils.Info("register rpc ok")
 	utils.PrintErr(err)
 	utils.SetBody(c,s2c)
 }
