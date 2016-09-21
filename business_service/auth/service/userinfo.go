@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-
+https://127.0.0.1/api/v1/signal/
 func (s *Service) UserInfoModify(ctx context.Context ,req *pb.UserInfoModifyC2S,) (*pb.UserInfoModifyS2C,error){
 
 	mlog.Info("request info modify:%v",*req)

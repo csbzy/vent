@@ -281,7 +281,7 @@
   }
   
   function sendDisconnect() {
-    ws.send(JSON.stringify({"cmd":"user disconnected"}));
+    ws.send(JSON.stringify({"type":"leave"}));
   }
 
   // -------- handling user UI event -----
