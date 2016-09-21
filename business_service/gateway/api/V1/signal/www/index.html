@@ -68,24 +68,26 @@
     "room":roomname
     }));
    }
-
-    ws.onmessage = function(e){
-        console.log("receive :",JSON.parse(e.data));
-        var objJson = JSON.parse(e.data);
+    ws.onerror = function(e){
+        console.log("websocket close error:",e)
+    }
+    ws.onmessage = function(evt){
+        console.log("receive :",JSON.parse(evt.data));
+        var objJson = JSON.parse(evt.data);
      if (objJson.type === 'offer') {
       console.log("Received offer, set offer, sending answer....")
-      onOffer(evt);
+      onOffer(objJson);
     } else if (objJson.type === 'answer' && peerStarted) {
       console.log('Received answer, settinng answer SDP');
-      onAnswer(evt);
+      onAnswer(objJson);
     } else if (objJson.type === 'candidate' && peerStarted) {
       console.log('Received ICE candidate...');
-      onCandidate(evt);
+      onCandidate(objJson);
     } else if (objJson.type === 'user disconnected' && peerStarted) {
       console.log("disconnected");
       stop();
     }else {
-        console.log("receive",objJson);
+        console.log("unknow message",objJson);
     }
     }
     ws.onclose = function(e){
