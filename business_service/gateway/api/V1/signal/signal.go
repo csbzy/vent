@@ -10,7 +10,7 @@ import (
 )
 
 type signal struct {
-	SignalType    string `json:"type"`
+	SignalType    string `json:"type"` // enter | leave | offer |answer |
 	Room          string `json:"room"`
 	Sdp           string `json:"sdp"`
 	SdpMLineIndex int    `json:"sdpMLineIndex"`
@@ -38,6 +38,7 @@ func SetupSignalApi() {
 			if err != nil {
 				utils.PrintErr(err)
 			} else {
+				//@todo auth account before handle busniss
 				switch s.SignalType {
 				case "enter":
 					curRoom = s.Room
