@@ -29,22 +29,23 @@ func SetupSignalApi() {
 	iris.Config.Websocket.PongTimeout = time.Second * 10
 	iris.Config.Websocket.PingPeriod = (iris.Config.Websocket.PongTimeout) * 9 / 10
 	ws := iris.Websocket
-	s := &signal{}
-	var curRoom string
 	ws.OnConnection(func(c iris.WebsocketConnection) {
+		s := &signal{}
+		var curRoom *string
 		c.OnMessage(func(data []byte) {
 			fmt.Printf("recive:%v\n", string(data))
 			err := json.Unmarshal(data, s)
 			if err != nil {
 				utils.PrintErr(err)
 			} else {
-				//@todo auth account before handle busniss
+				//@todo auth account before handle busniess
 				switch s.SignalType {
 				case "enter":
-					curRoom = s.Room
+					curRoom = &s.Room
 					c.Join(s.Room)
 				case "leave":
-					c.Leave(curRoom)
+					c.Leave(*curRoom)
+					curRoom = nil
 				default:
 					c.To(websocket.Broadcast).EmitMessage(data)
 				}
