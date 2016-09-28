@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/jbrodriguez/mlog"
 	"golang.org/x/net/context"
 	pb "github.com/chenshaobo/vent/business_service/proto"
 	"github.com/chenshaobo/vent/business_service/utils"
@@ -9,11 +8,12 @@ import (
 	"github.com/satori/go.uuid"
 	"strconv"
 	"encoding/hex"
+	"github.com/jbrodriguez/mlog"
 )
 
 func (s *Service) Login(ctx context.Context ,req *pb.LoginC2S)(*pb.LoginS2C ,error){
 	//do register logic
-	mlog.Info("request login:%v, %v",req.PhoneNumber,req.Password)
+	utils.Info("request login:%v, %v",req.PhoneNumber,req.Password)
 	res := &pb.LoginS2C{}
 	phoneStr := strconv.FormatUint(req.PhoneNumber,10)
 	account := utils.AccountPhonePrefix + phoneStr

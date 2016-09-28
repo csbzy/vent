@@ -607,7 +607,7 @@ func (rc RedisClient) DisConnect() {
 	rc.pool.Close()
 }
 
-func CreateRedisPool(addr string, maxActive, maxIdle int, wait bool) (pool *redis.Pool) {
+func CreateRedisPool(addr string,DBNum, maxActive, maxIdle int, wait bool) (pool *redis.Pool) {
 	msgRedisConfig := addr
 	pool = &redis.Pool{
 		MaxActive:   maxActive,
@@ -619,6 +619,7 @@ func CreateRedisPool(addr string, maxActive, maxIdle int, wait bool) (pool *redi
 			if err != nil {
 				return nil, err
 			}
+			_,err =c.Do("SELECT",DBNum)
 			return c, err
 		},
 		TestOnBorrow: func(c redis.Conn, t time.Time) error {
@@ -629,11 +630,11 @@ func CreateRedisPool(addr string, maxActive, maxIdle int, wait bool) (pool *redi
 	return
 }
 
-func InitRedisClient(addr string, MaxActive, MaxIdle int, Wait bool) (*RedisClient, error) {
-	pool := CreateRedisPool(addr, MaxActive, MaxIdle, Wait)
+func InitRedisClient(addr string, DB,MaxActive, MaxIdle int, Wait bool) (*RedisClient, error) {
+	pool := CreateRedisPool(addr,DB, MaxActive, MaxIdle, Wait)
 	return &RedisClient{pool, addr}, nil
 }
 
 func InitDefaultClient(addr string) (Redis, error) {
-	return InitRedisClient(addr, 0, 3, true)
+	return InitRedisClient(addr, 0,0, 3, true)
 }

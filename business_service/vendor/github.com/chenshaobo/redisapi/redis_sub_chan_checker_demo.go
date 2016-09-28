@@ -10,7 +10,7 @@ var (
 )
 
 func createPubSubConnPool() *redis.Pool {
-	return CreateRedisPool(":6379", 10, 3, true)
+	return CreateRedisPool(":6379", 0,10, 3, true)
 }
 
 func setUpServerMsgChecker() {

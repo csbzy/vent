@@ -12,14 +12,14 @@ import (
 import(
 	"github.com/chenshaobo/vent/business_service/consul"
 	pb "github.com/chenshaobo/vent/business_service/proto"
-	authService"github.com/chenshaobo/vent/business_service/rpcService"
+	"github.com/chenshaobo/vent/business_service/rpcService/service"
 	"github.com/jbrodriguez/mlog"
 )
 
 var (
-	serv = flag.String("service", "registerService", "service name")
-	port = flag.Int("port", 8100, "listening port")
-	reg  = flag.String("reg", "172.16.7.119:8500", "register address")
+	serv = flag.String("service", "releationService", "service name")
+	port = flag.Int("port", 8200, "listening port")
+	reg  = flag.String("reg", "127.0.0.1:8500", "register address")
 )
 
 func init(){
@@ -41,10 +41,9 @@ func main(){
 	}
 
 	s := grpc.NewServer()
-	authSer := &authService.Service{Redisc:rdc}
-	pb.RegisterRegisterServer(s,authSer)
-	pb.RegisterLoginServer(s,authSer)
-	pb.RegisterUserInfoManagerServer(s,authSer)
+	geoSer := &service.Service{Redisc:rdc}
+	pb.RegisterGeoManagerServer(s,geoSer)
+
 	mlog.Info("start auth service ok.")
 	s.Serve(lis)
 }

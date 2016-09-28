@@ -3,15 +3,14 @@ package service
 import (
 	"golang.org/x/net/context"
 	pb "github.com/chenshaobo/vent/business_service/proto"
-	"github.com/jbrodriguez/mlog"
 	"github.com/chenshaobo/vent/business_service/utils"
 	"strconv"
 )
 
-https://127.0.0.1/api/v1/signal/
+
 func (s *Service) UserInfoModify(ctx context.Context ,req *pb.UserInfoModifyC2S,) (*pb.UserInfoModifyS2C,error){
 
-	mlog.Info("request info modify:%v",*req)
+	utils.Info("request info modify:%v",*req)
 
 	userInfoKey := utils.UserInfoHashPrefix +  strconv.FormatUint(req.UserId,10)
 	res := &pb.UserInfoModifyS2C{}
@@ -39,10 +38,10 @@ func (s *Service) UserInfoModify(ctx context.Context ,req *pb.UserInfoModifyC2S,
 
 func (s *Service) UserInfoGet(ctx context.Context,req *pb.UserInfoGetC2S)(*pb.UserInfoGetS2C,error){
 
-	mlog.Info("request get user info:%v",req)
+	utils.Info("request get user info:%v",req)
 	userInfoKey := utils.UserInfoHashPrefix +  strconv.FormatUint(req.UserId,10)
 	userInfo,err := s.Redisc.HMget(userInfoKey,"nickname","sex","city","signature")
-	mlog.Info("userinfo:%v ,err:%v",userInfo,err)
+	utils.Info("userinfo:%v ,err:%v",userInfo,err)
 
 	res := &pb.UserInfoGetS2C{}
 	return res,nil

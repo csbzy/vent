@@ -50,3 +50,15 @@ message UserInfoGetS2C{
     string signature =4;//个性签名
     string city =5;     //居住城市
 }
+
+
+
+//releation
+message GeoUploadC2S{
+	double longitude = 1;
+	double latitude =2;
+}
+
+message CommonS2C{
+	uint32 err_code = 1;
+}

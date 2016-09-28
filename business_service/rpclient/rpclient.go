@@ -47,6 +47,7 @@ func (rc *RClients) register(serviceName string,registerHost string) {
 		b := grpc.RoundRobin(r)
 		mlog.Info("register:  service name:%v,register host:%v",serviceName,registerHost)
 		conn, err := grpc.Dial(registerHost, grpc.WithInsecure(), grpc.WithBalancer(b), grpc.WithTimeout(time.Second * 10))
+		mlog.Info("get conn ok")
 		utils.PrintErr(err)
 		rc.cc[serviceName] = conn
 	}

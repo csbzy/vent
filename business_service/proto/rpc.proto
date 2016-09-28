@@ -14,3 +14,8 @@ service UserInfoManager{
 	rpc UserInfoModify(UserInfoModifyC2S) returns (UserInfoModifyS2C) {}
 	rpc UserInfoGet(UserInfoGetC2S) returns (UserInfoGetS2C){}
 }
+
+
+service GeoManager{
+	rpc UserGeoUpload(GeoUploadC2S ) returns (CommonS2C) {}
+}

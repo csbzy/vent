@@ -4,17 +4,13 @@ import (
 	"golang.org/x/net/context"
 	pb "github.com/chenshaobo/vent/business_service/proto"
 	"github.com/chenshaobo/vent/business_service/utils"
-	"github.com/jbrodriguez/mlog"
 	"strconv"
-	"github.com/chenshaobo/redisapi"
+	"github.com/jbrodriguez/mlog"
 )
-type Service struct{
-	Redisc *redisapi.RedisClient
-}
 
 func (s *Service) Register(ctx context.Context ,req *pb.RegisterC2S)(*pb.RegisterS2C ,error){
 	//do register logic
-	mlog.Info("request register:%v, %v",req.PhoneNumber,req.Password)
+	utils.Info("request register:%v, %v",req.PhoneNumber,req.Password)
 	res := &pb.RegisterS2C{}
 	phoneStr := strconv.FormatUint(req.PhoneNumber,10)
 	if req.PhoneNumber < 9999999999 || req.PhoneNumber > 99999999999{
