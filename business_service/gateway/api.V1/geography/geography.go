@@ -1,4 +1,5 @@
-package user
+package geography
+
 
 import (
 	"github.com/kataras/iris"
@@ -7,15 +8,21 @@ import (
 	"github.com/chenshaobo/vent/business_service/rpclient"
 	"github.com/chenshaobo/vent/business_service/utils"
 	"golang.org/x/net/context"
-	"github.com/jbrodriguez/mlog"
 )
 
+func SetupGeoApi(){
+	userParty := iris.Party("/api/v1/coordinate")
+	userParty.Put("",GeoUpload)
+}
 
-//REGISTER FOR IS API FOR  /api/v1/user/register
-func Register(c *iris.Context) {
+
+
+func GeoUpload(c *iris.Context){
 	body := c.PostBody()
-	c2s := &pb.RegisterC2S{}
-	s2c := &pb.RegisterS2C{}
+
+	c2s := &pb.GeoUploadC2S{}
+	s2c := &pb.CommonS2C{}
+
 
 	err := proto.Unmarshal(body, c2s)
 	if err != nil {
@@ -23,18 +30,15 @@ func Register(c *iris.Context) {
 		utils.SetBody(c,s2c)
 		return
 	}
-	mlog.Info("get register serive ")
-	conn := rpclient.Get("registerService")
-	mlog.Info("get register service ok")
+
+	conn := rpclient.Get(utils.ReleationSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		utils.SetBody(c,s2c)
 		return
 	}
-	utils.Info("register ")
-	rc := pb.NewRegisterClient(conn)
-	s2c, err = rc.Register(context.Background(), c2s)
-	utils.Info("register rpc ok")
+	rc := pb.NewGeoManagerClient(conn)
+	s2c, err = rc.UserGeoUpload(context.Background(), c2s)
 	utils.PrintErr(err)
 	utils.SetBody(c,s2c)
 }

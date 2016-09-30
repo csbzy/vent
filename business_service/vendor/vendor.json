@@ -3,16 +3,72 @@
 	"ignore": "test",
 	"package": [
 		{
+			"path": "-v",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "kMfAFLobZymMrCOm/Xi/g9gnJOU=",
 			"path": "github.com/ajg/form",
 			"revision": "523a5da1a92f01b01f840b61689c0340a0243532",
 			"revisionTime": "2016-08-22T23:00:20Z"
 		},
 		{
-			"checksumSHA1": "hK+uvmRA1pXsdC6TA8KC3UDt0LM=",
+			"checksumSHA1": "QSw4xaUbpeRTBe5d6IUub+wKcWU=",
 			"path": "github.com/chenshaobo/redisapi",
-			"revision": "331d34635aae62053d165dbe8324d2d976b12102",
-			"revisionTime": "2016-05-19T03:18:50Z"
+			"revision": "0777ff8159f4b145e1bc4c779787a826dc98aafe",
+			"revisionTime": "2016-09-30T06:03:26Z"
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/auth",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/auth/client",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/consul",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/gateway",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/gateway/api/V1/geography",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/gateway/api/V1/releation",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/gateway/api/V1/signal",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/gateway/api/V1/user",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/proto",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/rpcService",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/rpcService/service",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/rpclient",
+			"revision": ""
+		},
+		{
+			"path": "github.com/chenshaobo/vent/business_service/utils",
+			"revision": ""
 		},
 		{
 			"checksumSHA1": "5rPfda8jFccr3A6heL+JAmi9K9g=",
@@ -517,6 +573,36 @@
 			"revisionTime": "2016-09-12T21:59:12Z"
 		},
 		{
+			"checksumSHA1": "fpW2dhGFC6SrVzipJx7fjg2DIH8=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "8f0908ab3b2457e2e15403d3697c9ef5cb4b57a9",
+			"revisionTime": "2016-09-14T20:33:16Z"
+		},
+		{
+			"checksumSHA1": "PjYlbMS0ttyZYlaevvjA/gV3g1c=",
+			"path": "golang.org/x/sys/windows/registry",
+			"revision": "8f0908ab3b2457e2e15403d3697c9ef5cb4b57a9",
+			"revisionTime": "2016-09-14T20:33:16Z"
+		},
+		{
+			"checksumSHA1": "IRqLaXM/VQRzkbXPuiqOxTb2W0Y=",
+			"path": "golang.org/x/sys/windows/svc",
+			"revision": "8f0908ab3b2457e2e15403d3697c9ef5cb4b57a9",
+			"revisionTime": "2016-09-14T20:33:16Z"
+		},
+		{
+			"checksumSHA1": "uVlUSSKplihZG7N+QJ6fzDZ4Kh8=",
+			"path": "golang.org/x/sys/windows/svc/eventlog",
+			"revision": "8f0908ab3b2457e2e15403d3697c9ef5cb4b57a9",
+			"revisionTime": "2016-09-14T20:33:16Z"
+		},
+		{
+			"checksumSHA1": "6dvXhF7BOHN87mMJ8SaAuFxai0Q=",
+			"path": "golang.org/x/sys/windows/svc/mgr",
+			"revision": "8f0908ab3b2457e2e15403d3697c9ef5cb4b57a9",
+			"revisionTime": "2016-09-14T20:33:16Z"
+		},
+		{
 			"checksumSHA1": "V8pTN47rr79/VEvm2c4Yo1g8ghI=",
 			"path": "golang.org/x/time/rate",
 			"revision": "2bc1b4fbcc7c3eda9a26f6e523cac1196c6fecd7",
@@ -593,6 +679,11 @@
 			"path": "gopkg.in/square/go-jose.v1/json",
 			"revision": "139276ceb5afbf13e636c44e9382f0ca75c12ba3",
 			"revisionTime": "2016-09-03T19:04:28Z"
+		},
+		{
+			"checksumSHA1": "n9yy9EH83S4k4hv41FQTrnLARDw=",
+			"path": "vendor",
+			"revision": ""
 		}
 	],
 	"rootPath": "github.com/chenshaobo/vent/business_service"

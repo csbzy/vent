@@ -26,7 +26,7 @@ func (s *Service) Login(ctx context.Context ,req *pb.LoginC2S)(*pb.LoginS2C ,err
 		return res,nil
 	}
 
-	userID,_ :=s.Redisc.Get(account)
+	userID,_ := s.Redisc.Get(account)
 	if userID ==nil{
 		res.ErrCode = utils.ErrAccountNotExits
 		return res,nil
@@ -52,6 +52,8 @@ func (s *Service) Login(ctx context.Context ,req *pb.LoginC2S)(*pb.LoginS2C ,err
 		s.Redisc.Set(sessionKey,sessionByte)
 	}
 	s.Redisc.Expire(sessionKey,utils.DaySecond)
+	userIDInt,_ := strconv.ParseUint(userIDStr,10,64)
+	res.UserId = userIDInt
 	res.Session = string(sessionByte[:])
 
 

@@ -18,22 +18,14 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"github.com/chenshaobo/vent/business_service/utils"
 )
 
 var (
 	reg = flag.String("reg", "172.16.7.119:8500", "register address")
 )
 
-type  ServerInfo struct {
-	ServiceName    string `json:"serviceName"`
-	Port          int `json:"port"`
-	RedisConfig   redisConfig `json:"redisConfig"`
-}
 
-type redisConfig struct {
-	Host string `json:"host"`
-	DB   int  `json:"dbNum"`
-}
 
 func init() {
 }
@@ -44,16 +36,19 @@ func main() {
 	if err != nil{
 		panic(err)
 	}
-	sers := make([]ServerInfo,0)
+	sers := make([]utils.ServerInfo,0)
 	json.Unmarshal(serBytes,&sers)
 	mlog.Info("services: %#v",sers)
 	for _,ser :=  range sers {
 		mlog.Info("start :%v",ser)
 		switch ser.ServiceName{
-		case "registerServer":
+		case utils.RegisterSer:
 			authService(ser)
-		default:
 
+		case utils.ReleationSer:
+			relationService(ser)
+		default:
+			mlog.Info("unknow service name :%v",ser.ServiceName)
 		}
 	}
 
@@ -64,19 +59,17 @@ func main() {
 }
 
 
-func authService(s ServerInfo){
+func authService(s utils.ServerInfo){
 	redisHost := s.RedisConfig.Host
 	redisDB := s.RedisConfig.DB
 	listenPort := s.Port
 	serviceName := s.ServiceName
-
-	mlog.Info("register consul")
 	err := consul.Register(serviceName, "127.0.0.1", listenPort, *reg, time.Second * 30,  40)
 	if err != nil {
 		panic(err)
 	}
 	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", listenPort))
-	rdc,err := redisapi.InitRedisClient(redisHost,redisDB,6,6,true)
+	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),6,6,true)
 	grpcSer := grpc.NewServer()
 	authSer := &service.Service{Redisc:rdc}
 	pb.RegisterRegisterServer(grpcSer,authSer)
@@ -85,4 +78,24 @@ func authService(s ServerInfo){
 	mlog.Info("start auth service ok.")
 	go grpcSer.Serve(lis)
 
+}
+
+func relationService(s utils.ServerInfo){
+	redisHost := s.RedisConfig.Host
+	redisDB := s.RedisConfig.DB
+	listenPort := s.Port
+	serviceName := s.ServiceName
+	err := consul.Register(serviceName, "127.0.0.1", listenPort, *reg, time.Second * 30,  40)
+	if err != nil {
+		panic(err)
+	}
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", listenPort))
+	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),6,6,true)
+	grpcSer := grpc.NewServer()
+	relationSer := &service.Service{Redisc:rdc}
+
+	pb.RegisterGeoManagerServer(grpcSer,relationSer)
+
+	mlog.Info("start relation service ok.")
+	go grpcSer.Serve(lis)
 }

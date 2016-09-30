@@ -21,7 +21,7 @@ func Login(c *iris.Context) {
 		return
 	}
 
-	conn := rpclient.Get("registerService")
+	conn := rpclient.Get(utils.RegisterSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		utils.SetBody(c,s2c)
@@ -30,6 +30,11 @@ func Login(c *iris.Context) {
 
 	rc := pb.NewLoginClient(conn)
 	s2c, err = rc.Login(context.Background(), c2s)
+
+	if err == nil {
+		sessionKey := GetUserSessionKey(s2c.UserId)
+		c.Session().Set(sessionKey,s2c.Session)
+	}
 	utils.PrintErr(err)
 	utils.SetBody(c,s2c)
 }

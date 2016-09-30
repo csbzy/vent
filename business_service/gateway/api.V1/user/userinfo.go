@@ -20,15 +20,15 @@ func InfoModify(c *iris.Context){
 	if err != nil {
 		s2c.ErrCode = utils.ErrParams
 		utils.SetBody(c,s2c)
-		mlog.Info("err params")
+		mlog.Error(err)
 		return
 	}
 
-	conn := rpclient.Get("registerService")
+	conn := rpclient.Get(utils.RegisterSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		utils.SetBody(c,s2c)
-		mlog.Info("err conn")
+		mlog.Error(err)
 		return
 	}
 	rc := pb.NewUserInfoManagerClient(conn)
@@ -46,7 +46,7 @@ func InfoGet(c *iris.Context){
 		return
 	}
 
-	conn := rpclient.Get("registerService")
+	conn := rpclient.Get(utils.RegisterSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		utils.SetBody(c,s2c)

@@ -5,6 +5,14 @@ import (
 	"strconv"
 )
 
+//redis geo
+type GeoRedis interface {
+	GeoAdd(key string  ,c Coordinate,value string) error
+	GeoPos(key string,value string) (*Coordinate,error)
+	GeoDist(key string,value1,value2,distancUnit string) (float64,error)
+	GeoRadius(key string, c Coordinate,maxDis float64,opt...GeoOption)  (*[]GeoRadiusEle,error)
+	GeoRadiusByMember(key string,member string, maxDis float64,opt ...GeoOption)  (*[]GeoRadiusEle,error)
+}
 type SetRedis interface {
 	Sadd(key string, value ...interface{}) error
 	Scard(key string) (int, error)
@@ -62,6 +70,7 @@ type Redis interface {
 	SetRedis
 	OrderSetRedis
 	HashRedis
+	GeoRedis
 	Ping() bool
 	Exists(key string) bool
 
