@@ -7,7 +7,6 @@ import(
 
 
 func Query(consulHost string, key string) ([]byte,error) {
-	utils.Info("register :%v,key:%s",consulHost,key)
 	conf := &consul.Config{Scheme: "http", Address: consulHost}
 	client, err := consul.NewClient(conf)
 	utils.PrintErr(err)

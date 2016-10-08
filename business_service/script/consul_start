@@ -1,3 +1,2 @@
 #!/bin/bash
-consul agent -dev -client 127.0.0.1 >>/dev/null &
-
+consul agent -advertise 172.16.7.119 -client 172.16.7.119 -ui -data-dir ./config -server -datacenter dc1 -bootstrap >> /dev/null &

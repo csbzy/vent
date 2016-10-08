@@ -8,11 +8,12 @@ import (
 	"github.com/chenshaobo/vent/business_service/rpclient"
 	"github.com/chenshaobo/vent/business_service/utils"
 	"golang.org/x/net/context"
+	"github.com/chenshaobo/vent/business_service/gateway/api.V1/apiUtils"
 )
 
 func SetupGeoApi(){
 	userParty := iris.Party("/api/v1/coordinate")
-	userParty.Put("",GeoUpload)
+	userParty.Put("",apiUtils.AuthSession,GeoUpload)
 }
 
 

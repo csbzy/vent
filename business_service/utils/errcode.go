@@ -6,4 +6,5 @@ const (
 	ErrAccountExits //账号已存在
 	ErrAccountNotExits //账号不存在
 	ErrPasswordWrong  //密码错误
+	ErrSessionNotMatch //session错误
 )

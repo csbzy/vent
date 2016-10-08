@@ -1,0 +1,18 @@
+syntax = "proto3";
+package proto;
+
+
+message AuthC2S{
+    uint64 user_id =1;
+    string session =2;
+}
+
+message GetSessionReq{
+    uint64 user_id = 1;
+}
+
+message GetSessionRes{
+    uint32 err_code = 1;
+    uint64 user_id =2 ;
+    string session =3;
+}

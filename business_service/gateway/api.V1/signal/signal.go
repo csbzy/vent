@@ -19,7 +19,7 @@ type signal struct {
 }
 
 func SetupSignalApi() {
-	iris.StaticWeb("/api/v1/signal/", "./api/V1/signal/www/", 3)
+	iris.StaticWeb("/api/v1/signal/", "./api.V1/signal/www/", 3)
 
 	iris.Config.Websocket.Endpoint = "/ws"
 	iris.Config.Websocket.MaxMessageSize = 1024000

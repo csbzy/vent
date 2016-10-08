@@ -5,6 +5,7 @@ import (
 	"github.com/chenshaobo/vent/business_service/rpclient"
 	pb "github.com/chenshaobo/vent/business_service/proto"
 	"github.com/chenshaobo/vent/business_service/utils"
+	"github.com/chenshaobo/vent/business_service/gateway/api.V1/apiUtils"
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 )
@@ -32,7 +33,7 @@ func Login(c *iris.Context) {
 	s2c, err = rc.Login(context.Background(), c2s)
 
 	if err == nil {
-		sessionKey := GetUserSessionKey(s2c.UserId)
+		sessionKey := apiUtils.GetUserSessionKey(s2c.UserId)
 		c.Session().Set(sessionKey,s2c.Session)
 	}
 	utils.PrintErr(err)

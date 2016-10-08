@@ -63,5 +63,9 @@ func request(method string,url string ,m proto.Message,s2c proto.Message){
 	by := buf.Bytes()
 	err = proto.Unmarshal(by, s2c)
 	buf.Reset()
-	fmt.Printf("request %v:%v\nparam:%v\nreturnBody:%v\nresponse:%v\nreturn:%v\n%v\n\n\n", method, url, m,by,res, s2c.String(), err)
+	fmt.Printf("request %v:%v\n" +
+		"param:%v\n" +
+		"returnBody:%v\n" +
+		"response:%v\n" +
+		"return:%v\n%v\n\n\n", method, url, m,by,res, s2c.String(), err)
 }

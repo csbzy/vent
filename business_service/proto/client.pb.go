@@ -8,6 +8,7 @@ Package proto is a generated protocol buffer package.
 It is generated from these files:
 	client.proto
 	rpc.proto
+	server.proto
 
 It has these top-level messages:
 	RegisterC2S
@@ -20,6 +21,9 @@ It has these top-level messages:
 	UserInfoGetS2C
 	GeoUploadC2S
 	CommonS2C
+	AuthC2S
+	GetSessionReq
+	GetSessionRes
 */
 package proto
 

@@ -45,18 +45,6 @@ func (s *Service) Login(ctx context.Context ,req *pb.LoginC2S)(*pb.LoginS2C ,err
 	}
 
 
-	sessionKey := utils.AccountSessionPrefix +userIDStr
-	sessionByte ,err := s.Redisc.Get(sessionKey)
-	if err !=nil {
-		sessionByte = []byte(genSession())
-		s.Redisc.Set(sessionKey,sessionByte)
-	}
-	s.Redisc.Expire(sessionKey,utils.DaySecond)
-	userIDInt,_ := strconv.ParseUint(userIDStr,10,64)
-	res.UserId = userIDInt
-	res.Session = string(sessionByte[:])
-
-
 	return res,nil
 }
 

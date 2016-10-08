@@ -1,5 +1,6 @@
 package utils
 
+//redis key
 const (
 	AccountCount = "account:count"
 	AccountPhonePrefix = "account:phone:"
@@ -8,4 +9,12 @@ const (
 	AccountSessionPrefix ="account:session:"
 
 	UserInfoHashPrefix = "user:info:"
+)
+
+
+
+//mac
+const(
+	CookieUserKey = "u"
+	CookieUserSession = "s"
 )

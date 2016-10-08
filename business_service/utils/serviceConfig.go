@@ -3,6 +3,7 @@ package utils
 const (
 	RegisterSer = "registerService"
 	ReleationSer = "releationService"
+	AuthSer = "authService"
 
 
 	SessionConfig = "SessionConfig"

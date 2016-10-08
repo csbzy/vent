@@ -1,5 +1,6 @@
 syntax = "proto3";
 import "client.proto";
+import "server.proto";
 package proto;
 
 service Register {
@@ -18,4 +19,9 @@ service UserInfoManager{
 
 service GeoManager{
 	rpc UserGeoUpload(GeoUploadC2S ) returns (CommonS2C) {}
+}
+
+service SessionManager{
+	rpc GetSession(GetSessionReq) returns (GetSessionRes){}
+	rpc AuthSession(AuthC2S) returns (CommonS2C){}
 }

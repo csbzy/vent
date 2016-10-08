@@ -23,7 +23,8 @@ var (
 func main(){
 	flag.Parse()
 	rpclient.Init(*reg)
-	initSessionDB()
+	//the iris session manager not suit my busniess because of the session.sid
+	//initSessionDB()
 	initApi()
 }
 
@@ -56,18 +57,16 @@ func initSessionDB(){
 		MaxAgeSeconds: service.DefaultRedisMaxAgeSeconds}) // optionally configure the bridge between your redis server
 
 	iris.UseSessionDB(db)
+	//iris.Config.Sessions.Cookie = utils.CookieUserKey
 
 }
 
 
 
 func log(ctx *iris.Context){
-	userIDInt , err := strconv.ParseUint(ctx.GetCookie("u"),10,64)
-	if err != nil{
-		return
-	}
-   //@todo session you wen ti
-	mlog.Info("request:%v,   session:%v,%v  session from redis:%v   params: %v",string(ctx.Path()),ctx.GetCookie("u"),ctx.GetCookie("s"),ctx.Session().Get(user.GetUserSessionKey(userIDInt)),string(ctx.PostBody()))
+	mlog.Info("request:%v with params: %v",
+		string(ctx.Path()),
+		string(ctx.PostBody()))
 	ctx.Next()
 }
 
