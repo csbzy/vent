@@ -40,8 +40,7 @@ message UserInfoModifyS2C{
 }
 
 message UserInfoGetC2S{
-	uint64 user_id =1;
-	uint64 target_user_id=2;
+	uint64 target_user_id=1;
 }
 
 message UserInfoGetS2C{
@@ -50,6 +49,8 @@ message UserInfoGetS2C{
     string nickname  = 3;//名称
     string signature =4;//个性签名
     string city =5;     //居住城市
+	uint32 sex = 6; //性别 0.男 1.女
+
 }
 
 

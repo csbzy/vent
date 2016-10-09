@@ -23,5 +23,5 @@ service GeoManager{
 
 service SessionManager{
 	rpc GetSession(GetSessionReq) returns (GetSessionRes){}
-	rpc AuthSession(AuthC2S) returns (CommonS2C){}
+	rpc AuthSession(AuthReq) returns (CommonS2C){}
 }

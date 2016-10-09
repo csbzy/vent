@@ -2,7 +2,7 @@ syntax = "proto3";
 package proto;
 
 
-message AuthC2S{
+message AuthReq{
     uint64 user_id =1;
     string session =2;
 }

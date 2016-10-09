@@ -29,6 +29,7 @@ func main(){
 }
 
 func initApi(){
+	mlog.Start(mlog.LevelError,"")
 	iris.UseFunc(log)
 	user.SetupUserApi()
 	signal.SetupSignalApi()

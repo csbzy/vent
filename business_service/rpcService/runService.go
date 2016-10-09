@@ -7,9 +7,6 @@ import (
 	"time"
 	"google.golang.org/grpc"
 	"github.com/chenshaobo/redisapi"
-)
-
-import (
 	"github.com/chenshaobo/vent/business_service/consul"
 	 pb "github.com/chenshaobo/vent/business_service/proto"
 	"github.com/chenshaobo/vent/business_service/rpcService/service"
@@ -23,6 +20,7 @@ import (
 
 var (
 	reg = flag.String("reg", "172.16.7.119:8500", "register address")
+	maxRedisConn = 0
 )
 
 
@@ -31,6 +29,7 @@ func init() {
 }
 
 func main() {
+	mlog.Start(mlog.LevelError,"")
 	flag.Parse()
 	serBytes, err := consul.Query(*reg, "service01")
 	if err != nil{
@@ -44,7 +43,6 @@ func main() {
 		switch ser.ServiceName{
 		case utils.RegisterSer:
 			registerService(ser)
-
 		case utils.ReleationSer:
 			relationService(ser)
 		case utils.AuthSer:
@@ -71,7 +69,7 @@ func registerService(s utils.ServerInfo){
 		panic(err)
 	}
 	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", listenPort))
-	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),6,6,true)
+	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),maxRedisConn,6,true)
 	grpcSer := grpc.NewServer()
 	authSer := &service.Service{Redisc:rdc}
 	pb.RegisterRegisterServer(grpcSer,authSer)
@@ -92,7 +90,7 @@ func relationService(s utils.ServerInfo){
 		panic(err)
 	}
 	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", listenPort))
-	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),6,6,true)
+	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),maxRedisConn,6,true)
 	grpcSer := grpc.NewServer()
 	relationSer := &service.Service{Redisc:rdc}
 
@@ -112,7 +110,7 @@ func authSessionService(s utils.ServerInfo){
 		panic(err)
 	}
 	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", listenPort))
-	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),6,6,true)
+	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),maxRedisConn,6,true)
 	grpcSer := grpc.NewServer()
 	authSessionSer := &service.Service{Redisc:rdc}
 	pb.RegisterSessionManagerServer(grpcSer,authSessionSer)

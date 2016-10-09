@@ -9,6 +9,7 @@ import (
 	"github.com/chenshaobo/vent/business_service/utils"
 	"strconv"
 	"github.com/jbrodriguez/mlog"
+	"github.com/chenshaobo/vent/business_service/gateway/api.V1/apiUtils"
 )
 
 func InfoModify(c *iris.Context){
@@ -19,7 +20,7 @@ func InfoModify(c *iris.Context){
 	err := proto.Unmarshal(body, c2s)
 	if err != nil {
 		s2c.ErrCode = utils.ErrParams
-		utils.SetBody(c,s2c)
+		apiUtils.SetBody(c,s2c)
 		mlog.Error(err)
 		return
 	}
@@ -27,14 +28,15 @@ func InfoModify(c *iris.Context){
 	conn := rpclient.Get(utils.RegisterSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
-		utils.SetBody(c,s2c)
+		apiUtils.SetBody(c,s2c)
 		mlog.Error(err)
 		return
 	}
 	rc := pb.NewUserInfoManagerClient(conn)
 	s2c, err = rc.UserInfoModify(context.Background(), c2s)
 	utils.PrintErr(err)
-	utils.SetBody(c,s2c)
+	mlog.Info("s2c:%v",s2c)
+	apiUtils.SetBody(c,s2c)
 }
 
 func InfoGet(c *iris.Context){
@@ -42,21 +44,21 @@ func InfoGet(c *iris.Context){
 	s2c := &pb.UserInfoGetS2C{}
 	if err !=nil {
 		s2c.ErrCode = utils.ErrParams
-		utils.SetBody(c,s2c)
+		apiUtils.SetBody(c,s2c)
 		return
 	}
 
 	conn := rpclient.Get(utils.RegisterSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
-		utils.SetBody(c,s2c)
+		apiUtils.SetBody(c,s2c)
 		return
 	}
 
-	c2s := &pb.UserInfoGetC2S{UserId:userID}
+	c2s := &pb.UserInfoGetC2S{TargetUserId:userID}
 	rc := pb.NewUserInfoManagerClient(conn)
 	s2c, err = rc.UserInfoGet(context.Background(), c2s)
 	utils.PrintErr(err)
-	utils.SetBody(c,s2c)
+	apiUtils.SetBody(c,s2c)
 }
 

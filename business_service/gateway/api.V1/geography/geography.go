@@ -28,18 +28,18 @@ func GeoUpload(c *iris.Context){
 	err := proto.Unmarshal(body, c2s)
 	if err != nil {
 		s2c.ErrCode = utils.ErrParams
-		utils.SetBody(c,s2c)
+		apiUtils.SetBody(c,s2c)
 		return
 	}
 
 	conn := rpclient.Get(utils.ReleationSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
-		utils.SetBody(c,s2c)
+		apiUtils.SetBody(c,s2c)
 		return
 	}
 	rc := pb.NewGeoManagerClient(conn)
 	s2c, err = rc.UserGeoUpload(context.Background(), c2s)
 	utils.PrintErr(err)
-	utils.SetBody(c,s2c)
+	apiUtils.SetBody(c,s2c)
 }

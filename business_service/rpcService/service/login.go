@@ -5,7 +5,6 @@ import (
 	pb "github.com/chenshaobo/vent/business_service/proto"
 	"github.com/chenshaobo/vent/business_service/utils"
 	"crypto/md5"
-	"github.com/satori/go.uuid"
 	"strconv"
 	"encoding/hex"
 	"github.com/jbrodriguez/mlog"
@@ -13,7 +12,7 @@ import (
 
 func (s *Service) Login(ctx context.Context ,req *pb.LoginC2S)(*pb.LoginS2C ,error){
 	//do register logic
-	utils.Info("request login:%v, %v",req.PhoneNumber,req.Password)
+	mlog.Info("request login:%v, %v",req.PhoneNumber,req.Password)
 	res := &pb.LoginS2C{}
 	phoneStr := strconv.FormatUint(req.PhoneNumber,10)
 	account := utils.AccountPhonePrefix + phoneStr
@@ -43,8 +42,12 @@ func (s *Service) Login(ctx context.Context ,req *pb.LoginC2S)(*pb.LoginS2C ,err
 		res.ErrCode = utils.ErrPasswordWrong
 		return res,nil
 	}
-
-
+	userIDInt,err:= strconv.ParseUint(userIDStr,10,64)
+	if err != nil{
+		res.ErrCode = utils.ErrServer
+		return res,nil
+	}
+	res.UserId = userIDInt
 	return res,nil
 }
 
@@ -56,6 +59,3 @@ func GetMD5Hash(text string) string{
 
 
 
-func genSession() string{
-	return uuid.NewV4().String()
-}

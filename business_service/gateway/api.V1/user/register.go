@@ -20,21 +20,35 @@ func Register(c *iris.Context) {
 	err := proto.Unmarshal(body, c2s)
 	if err != nil {
 		s2c.ErrCode = utils.ErrParams
-		utils.SetBody(c,s2c)
+		apiUtils.SetBody(c,s2c)
 		return
 	}
 	conn := rpclient.Get(utils.RegisterSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
-		utils.SetBody(c,s2c)
+		apiUtils.SetBody(c,s2c)
 		return
 	}
 	rc := pb.NewRegisterClient(conn)
 	s2c, err = rc.Register(context.Background(), c2s)
 	utils.PrintErr(err)
-	if err == nil {
-		sessionKey := apiUtils.GetUserSessionKey(s2c.UserId)
-		c.Session().Set(sessionKey,s2c.Session)
+	if err != nil {
+		s2c.ErrCode = utils.ErrServer
+		apiUtils.SetBody(c,s2c)
+		return
 	}
-	utils.SetBody(c,s2c)
+
+
+	if s2c.ErrCode > 0 {
+		apiUtils.SetBody(c,s2c)
+		return
+	}
+	session,errCode := getSession(s2c.UserId)
+	if errCode > 0 {
+		s2c.ErrCode =  errCode
+		apiUtils.SetBody(c,s2c)
+		return
+	}
+	s2c.Session = session
+	apiUtils.SetBody(c,s2c)
 }

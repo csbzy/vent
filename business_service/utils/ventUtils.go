@@ -2,8 +2,6 @@ package utils
 
 import (
 	"github.com/jbrodriguez/mlog"
-	"github.com/kataras/iris"
-	"github.com/golang/protobuf/proto"
 )
 
 func init(){
@@ -23,13 +21,4 @@ func PrintErr(err error){
 	}
 }
 
-func Info(format string, a ...interface{}) {
-	mlog.Info(format,a)
-}
 
-
-
-func SetBody(c *iris.Context,pm proto.Message){
-	buf, _ := proto.Marshal(pm)
-	c.Gzip(buf, 1)
-}
