@@ -32,7 +32,7 @@ func GeoUpload(c *iris.Context){
 		return
 	}
 
-	conn := rpclient.Get(utils.ReleationSer)
+	conn := rpclient.Get(utils.RelationSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		apiUtils.SetBody(c,s2c)

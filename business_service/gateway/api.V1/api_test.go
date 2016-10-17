@@ -27,11 +27,11 @@ func runApi(workerSize int64,b *testing.B) {
 	fmt.Printf("phonenumber:%v\n",phoneNum)
 	jobs := make(chan uint64,totalJobSize)
 
-	for i = 0;i <workerSize;i++{
-		go worker(jobs)
-	}
 	for i = 0; i < (totalJobSize); i++ {
 		jobs <- uint64(phoneNum+i)
+	}
+	for i = 0;i <workerSize;i++{
+		go worker(jobs)
 	}
 	wg.Wait()
 }

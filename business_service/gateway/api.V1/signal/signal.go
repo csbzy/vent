@@ -7,6 +7,7 @@ import (
 	"gopkg.in/square/go-jose.v1/json"
 	"time"
 	"github.com/kataras/go-websocket"
+	"github.com/chenshaobo/vent/business_service/gateway/api.V1/apiUtils"
 )
 
 type signal struct {
@@ -16,6 +17,8 @@ type signal struct {
 	SdpMLineIndex int    `json:"sdpMLineIndex"`
 	SdpMid        string `json:"sdpMid"`
 	Candidate     string `json:"candidate"`
+	UserID        uint64    `json:"user_id"`
+	Session       string `json:"session"`
 }
 
 func SetupSignalApi() {
@@ -32,22 +35,32 @@ func SetupSignalApi() {
 	ws.OnConnection(func(c iris.WebsocketConnection) {
 		s := &signal{}
 		var curRoom *string
+		var isAuth bool
 		c.OnMessage(func(data []byte) {
 			fmt.Printf("recive:%v\n", string(data))
 			err := json.Unmarshal(data, s)
 			if err != nil {
 				utils.PrintErr(err)
 			} else {
-				//@todo auth account before handle busniess
-				switch s.SignalType {
-				case "enter":
-					curRoom = &s.Room
-					c.Join(s.Room)
-				case "leave":
-					c.Leave(*curRoom)
-					curRoom = nil
-				default:
-					c.To(websocket.Broadcast).EmitMessage(data)
+				if isAuth {
+					switch s.SignalType {
+					case "enter":
+						curRoom = &s.Room
+						c.Join(s.Room)
+					case "leave":
+						c.Leave(*curRoom)
+						curRoom = nil
+					default:
+						c.To(websocket.Broadcast).EmitMessage(data)
+					}
+				}else{
+					switch s.SignalType {
+					case "auth":
+						apiUtils.Auth(s.UserID,s.Session)
+					default:
+						c.EmitMessage([]byte("401"))
+						c.Disconnect()
+					}
 				}
 			}
 		})

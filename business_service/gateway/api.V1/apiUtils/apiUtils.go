@@ -28,13 +28,9 @@ func AuthSession(ctx *iris.Context){
 		ctx.Response.SetStatusCode(401)
 		return
 	}
-	authConn := rpclient.Get(utils.AuthSer)
+	authPass := Auth(userIDInt,reqSession)
 
-	authSession := pb.NewSessionManagerClient(authConn)
-	authReq := &pb.AuthReq{UserId:userIDInt,Session:reqSession}
-	authRes := &pb.CommonS2C{}
-	authRes,err = authSession.AuthSession(context.Background(),authReq)
-	if err !=nil || authRes.ErrCode > 0{
+	if !authPass{
 		ctx.Response.SetStatusCode(401)
 		return
 	}
@@ -44,4 +40,18 @@ func AuthSession(ctx *iris.Context){
 func SetBody(c *iris.Context,pm proto.Message){
 	buf, _ := proto.Marshal(pm)
 	c.Gzip(buf, 1)
+}
+
+func Auth(userID uint64,session string) bool{
+	authConn := rpclient.Get(utils.AuthSer)
+
+	authSession := pb.NewSessionManagerClient(authConn)
+	authReq := &pb.AuthReq{UserId:userID,Session:session}
+	authRes := &pb.CommonS2C{}
+	authRes,err := authSession.AuthSession(context.Background(),authReq)
+	if err !=nil || authRes.ErrCode > 0{
+
+		return false
+	}
+	return true
 }
