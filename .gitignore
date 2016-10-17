@@ -3,3 +3,7 @@ dump.rdb
 business_service/gateway/gateway
 .idea/
 business_service/config
+business_service/gateway/main
+business_service/gateway/api.V1/api.V1.test
+business_service/gateway/api.V1/cpu.out
+business_service/gateway/api.V1/mem.out
