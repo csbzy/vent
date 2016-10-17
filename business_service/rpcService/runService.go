@@ -20,6 +20,7 @@ import (
 
 var (
 	reg = flag.String("reg", "172.16.7.119:8500", "register address")
+	serviceName = flag.String("ser",utils.ServiceDefaultName,"get service 's config from consul")
 	maxRedisConn = 0
 )
 
@@ -31,7 +32,7 @@ func init() {
 func main() {
 	mlog.Start(mlog.LevelError,"")
 	flag.Parse()
-	serBytes, err := consul.Query(*reg, "service01")
+	serBytes, err := consul.Query(*reg, *serviceName)
 	if err != nil{
 		panic(err)
 	}
@@ -43,7 +44,7 @@ func main() {
 		switch ser.ServiceName{
 		case utils.RegisterSer:
 			registerService(ser)
-		case utils.ReleationSer:
+		case utils.RelationSer:
 			relationService(ser)
 		case utils.AuthSer:
 			authSessionService(ser)

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"math/rand"
 )
 
 var wg sync.WaitGroup
@@ -18,30 +19,31 @@ func TestRegister(t *testing.T) {
 	fmt.Println("test is ok!")
 }
 
-func runApi(workerSize int,b *testing.B) {
-	var i int
+func runApi(workerSize int64,b *testing.B) {
+	var i int64
 	fmt.Printf("run times:%v\n",b.N)
-	phoneNum := uint64(13510162778)
-	totalJobSize :=  b.N
+	totalJobSize :=  int64(b.N)
+	phoneNum := rand.Int63n(99999999999- totalJobSize) + totalJobSize
+	fmt.Printf("phonenumber:%v\n",phoneNum)
 	jobs := make(chan uint64,totalJobSize)
 
 	for i = 0;i <workerSize;i++{
 		go worker(jobs)
 	}
 	for i = 0; i < (totalJobSize); i++ {
-		jobs <- (phoneNum+uint64(i))
+		jobs <- uint64(phoneNum+i)
 	}
 	wg.Wait()
 }
 
 
 
-func BenchmarkApi1000(b  *testing.B) {
-	runApi(1000,b)
+func BenchmarkApi100(b  *testing.B) {
+	runApi(100,b)
 }
 
-func BenchmarkApi10000(b  *testing.B) {
-	runApi(10000,b)
+func BenchmarkApi1000(b  *testing.B) {
+	runApi(1000,b)
 }
 
 

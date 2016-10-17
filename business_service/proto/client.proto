@@ -55,7 +55,7 @@ message UserInfoGetS2C{
 
 
 
-//releation
+//用户关系相关
 message GeoUploadC2S{
 	uint64 user_id =1;
 	double longitude = 2;
@@ -64,4 +64,14 @@ message GeoUploadC2S{
 
 message CommonS2C{
 	uint32 err_code = 1;
+}
+
+
+message FriendGetC2S{
+	uint64 user_id = 1;
+}
+
+message Friend {
+	repeated Friend=1;
+	uint64 user_id=2;
 }

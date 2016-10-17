@@ -2,11 +2,13 @@ package utils
 
 const (
 	RegisterSer = "registerService"
-	ReleationSer = "releationService"
+	RelationSer = "relationService"
 	AuthSer = "authService"
 
 
 	SessionConfig = "SessionConfig"
+
+	ServiceDefaultName = "service01"
 )
 
 
