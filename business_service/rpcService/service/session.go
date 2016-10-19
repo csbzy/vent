@@ -9,22 +9,22 @@ import (
 	"github.com/jbrodriguez/mlog"
 )
 
-func (s *Service) AuthSession(ctx context.Context, c2s *pb.AuthReq) (*pb.CommonS2C, error){
-	res := &pb.CommonS2C{}
+func (s *Service) AuthSession(ctx context.Context, c2s *pb.AuthC2S) (*pb.CommonS2C, error){
+	s2c := &pb.CommonS2C{}
 	userIDStr := strconv.FormatUint(c2s.UserId,10)
 	sessionKey := utils.AccountSessionPrefix +userIDStr
 	sessionByte ,err := s.Redisc.Get(sessionKey)
 	if err !=nil || len(sessionByte) == 0 || c2s.Session != string(sessionByte[:]) {
 
-		res.ErrCode = utils.ErrSessionNotMatch
+		s2c.ErrCode = utils.ErrSessionNotMatch
 	}
 	mlog.Info("session:%v ,redis session:%v",c2s.Session,string(sessionByte[:]))
-	return res,nil
+	return s2c,nil
 }
 
 
-func (s *Service) GetSession(ctx context.Context, c2s *pb.GetSessionReq) (*pb.GetSessionRes, error){
-	res := &pb.GetSessionRes{}
+func (s *Service) GetSession(ctx context.Context, c2s *pb.GetSessionC2S) (*pb.GetSessionS2C, error){
+	s2c := &pb.GetSessionS2C{}
 	userIDStr := strconv.FormatUint(c2s.UserId,10)
 	sessionKey := utils.AccountSessionPrefix +userIDStr
 	sessionByte ,err := s.Redisc.Get(sessionKey)
@@ -37,10 +37,10 @@ func (s *Service) GetSession(ctx context.Context, c2s *pb.GetSessionReq) (*pb.Ge
 	}
 	s.Redisc.Expire(sessionKey,utils.DaySecond)
 
-	res.UserId = c2s.UserId
-	res.Session = string(sessionByte[:])
+	s2c.UserId = c2s.UserId
+	s2c.Session = string(sessionByte[:])
 
-	return res,nil
+	return s2c,nil
 }
 
 

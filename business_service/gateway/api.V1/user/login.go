@@ -59,16 +59,16 @@ func Login(c *iris.Context) {
 func getSession(userID uint64) (string ,uint32){
 	authConn := rpclient.Get(utils.AuthSer)
 	getSession := pb.NewSessionManagerClient(authConn)
-	getSessionReq := &pb.GetSessionReq{UserId:userID}
-	getSessionRes := &pb.GetSessionRes{}
-	getSessionRes,err := getSession.GetSession(context.Background(),getSessionReq)
+	getSessionC2S := &pb.GetSessionC2S{UserId:userID}
+	getSessionS2C := &pb.GetSessionS2C{}
+	getSessionS2C,err := getSession.GetSession(context.Background(),getSessionC2S)
 	if err != nil {
 		utils.PrintErr(err)
 		return "",utils.ErrServer
 	}
-	if getSessionRes.ErrCode > 0 {
-		mlog.Info("get session error:%v",getSessionRes.ErrCode)
-		return "",getSessionRes.ErrCode
+	if getSessionS2C.ErrCode > 0 {
+		mlog.Info("get session error:%v",getSessionS2C.ErrCode)
+		return "",getSessionS2C.ErrCode
 	}
-	return getSessionRes.Session,0
+	return getSessionS2C.Session,0
 }

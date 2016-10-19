@@ -16,6 +16,7 @@ import (
 	"os/signal"
 	"syscall"
 	"github.com/chenshaobo/vent/business_service/utils"
+	"github.com/chenshaobo/vent/business_service/rpclient"
 )
 
 var (
@@ -39,15 +40,16 @@ func main() {
 	sers := make([]utils.ServerInfo,0)
 	json.Unmarshal(serBytes,&sers)
 	mlog.Info("services: %#v",sers)
+	listenIP := getLocalIP()
 	for _,ser :=  range sers {
 		mlog.Info("start :%v",ser)
 		switch ser.ServiceName{
 		case utils.RegisterSer:
-			registerService(ser)
+			registerService(ser,listenIP)
 		case utils.RelationSer:
-			relationService(ser)
+			relationService(ser,listenIP)
 		case utils.AuthSer:
-			authSessionService(ser)
+			authSessionService(ser,listenIP)
 		default:
 			mlog.Info("unknow service name :%v",ser.ServiceName)
 		}
@@ -60,12 +62,12 @@ func main() {
 }
 
 
-func registerService(s utils.ServerInfo){
+func registerService(s utils.ServerInfo,listenIP string){
 	redisHost := s.RedisConfig.Host
 	redisDB := s.RedisConfig.DB
 	listenPort := s.Port
 	serviceName := s.ServiceName
-	err := consul.Register(serviceName, "127.0.0.1", listenPort, *reg, time.Second * 30,  40)
+	err := consul.Register(serviceName, listenIP, listenPort, *reg, time.Second * 30,  40)
 	if err != nil {
 		panic(err)
 	}
@@ -81,32 +83,33 @@ func registerService(s utils.ServerInfo){
 
 }
 
-func relationService(s utils.ServerInfo){
+func relationService(s utils.ServerInfo,listenIP string){
 	redisHost := s.RedisConfig.Host
 	redisDB := s.RedisConfig.DB
 	listenPort := s.Port
 	serviceName := s.ServiceName
-	err := consul.Register(serviceName, "127.0.0.1", listenPort, *reg, time.Second * 30,  40)
+	err := consul.Register(serviceName, listenIP, listenPort, *reg, time.Second * 30,  40)
 	if err != nil {
 		panic(err)
 	}
+	rpclient.Init(*reg)
 	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", listenPort))
 	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),maxRedisConn,6,true)
 	grpcSer := grpc.NewServer()
 	relationSer := &service.Service{Redisc:rdc}
 
 	pb.RegisterGeoManagerServer(grpcSer,relationSer)
-
+	pb.RegisterRelationServer(grpcSer,relationSer)
 	mlog.Info("start relation service ok.")
 	go grpcSer.Serve(lis)
 }
 
-func authSessionService(s utils.ServerInfo){
+func authSessionService(s utils.ServerInfo,listenIP string){
 	redisHost := s.RedisConfig.Host
 	redisDB := s.RedisConfig.DB
 	listenPort := s.Port
 	serviceName := s.ServiceName
-	err := consul.Register(serviceName, "127.0.0.1", listenPort, *reg, time.Second * 30,  40)
+	err := consul.Register(serviceName, listenIP, listenPort, *reg, time.Second * 30,  40)
 	if err != nil {
 		panic(err)
 	}
@@ -118,4 +121,20 @@ func authSessionService(s utils.ServerInfo){
 
 	mlog.Info("start relation service ok.")
 	go grpcSer.Serve(lis)
+}
+
+func getLocalIP() string {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return ""
+	}
+	for _, address := range addrs {
+		// check the address type and if it is not a loopback the display it
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String()
+			}
+		}
+	}
+	return ""
 }

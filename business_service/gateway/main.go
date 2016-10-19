@@ -14,6 +14,7 @@ import(
 	"github.com/kataras/go-sessions/sessiondb/redis"
 	"github.com/kataras/go-sessions/sessiondb/redis/service"
 	"strconv"
+	"github.com/chenshaobo/vent/business_service/gateway/api.V1/relation"
 )
 
 var (
@@ -34,6 +35,7 @@ func initApi(){
 	user.SetupUserApi()
 	signal.SetupSignalApi()
 	geography.SetupGeoApi()
+	relation.SetupRelationApi()
 	///iris.UseFunc(fin)
 	iris.AddServer(iris.ServerConfiguration{ListeningAddr: ":443", CertFile: "server.crt", KeyFile: "server.key"}) // you can close this server with .Close()
 	iris.Listen("0.0.0.0:8080")

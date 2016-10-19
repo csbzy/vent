@@ -9,6 +9,7 @@ const (
 	AccountSessionPrefix ="account:session:"
 
 	UserInfoHashPrefix = "user:info:"
+	RecentContactPrefix = "recent_contact:"
 )
 
 

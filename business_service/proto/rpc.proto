@@ -1,6 +1,5 @@
 syntax = "proto3";
 import "client.proto";
-import "server.proto";
 package proto;
 
 service Register {
@@ -22,6 +21,10 @@ service GeoManager{
 }
 
 service SessionManager{
-	rpc GetSession(GetSessionReq) returns (GetSessionRes){}
-	rpc AuthSession(AuthReq) returns (CommonS2C){}
+	rpc GetSession(GetSessionC2S) returns (GetSessionS2C){}
+	rpc AuthSession(AuthC2S) returns (CommonS2C){}
+}
+
+service Relation{
+	rpc RecentContactGet(RecentContactGetC2S) returns(RecentContactGetS2C){}
 }

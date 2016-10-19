@@ -2,7 +2,6 @@ syntax = "proto3";
 package proto;
 
 
-
 message RegisterC2s{
 	uint64 phone_number =1;
 	string password = 2;
@@ -50,8 +49,8 @@ message UserInfoGetS2C{
     string signature =4;//个性签名
     string city =5;     //居住城市
 	uint32 sex = 6; //性别 0.男 1.女
-
 }
+
 
 
 
@@ -67,11 +66,33 @@ message CommonS2C{
 }
 
 
-message FriendGetC2S{
+message RecentContactGetC2S{
 	uint64 user_id = 1;
 }
 
-message Friend {
-	repeated Friend=1;
-	uint64 user_id=2;
+message RecentContactGetS2C{
+	uint32  err_code = 1;
+	repeated Friend friends=2;
+}
+
+message Friend{
+	uint64 user_id=1;
+	string signature=2;
+}
+
+
+
+message AuthC2S{
+	uint64 user_id =1;
+	string session =2;
+}
+
+message GetSessionC2S{
+	uint64 user_id = 1;
+}
+
+message GetSessionS2C{
+	uint32 err_code = 1;
+	uint64 user_id =2 ;
+	string session =3;
 }
