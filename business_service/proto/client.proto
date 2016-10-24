@@ -111,7 +111,7 @@ message GetSessionS2C{
 
 message GetCaptchaC2S{
 	uint32 type =1; //1.reg 2.forget password
-	uint64 key =2 ;
+	string key =2 ;
 }
 
 message GetCaptchaS2C{
@@ -121,7 +121,7 @@ message GetCaptchaS2C{
 
 message CheckCaptchaC2S{
 	uint32 type =1;
-	uint64 key =2;
+	string key =2;
 	uint32 captcha =3;
 }
 

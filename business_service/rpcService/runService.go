@@ -50,6 +50,8 @@ func main() {
 			relationService(ser,listenIP)
 		case utils.AuthSer:
 			authSessionService(ser,listenIP)
+		case utils.CaptchaSer:
+			captchaService(ser,listenIP)
 		default:
 			mlog.Info("unknow service name :%v",ser.ServiceName)
 		}
@@ -61,6 +63,24 @@ func main() {
 	<-sigs
 }
 
+
+func captchaService(s utils.ServerInfo,listenIP string){
+	redisHost := s.RedisConfig.Host
+	redisDB := s.RedisConfig.DB
+	listenPort := s.Port
+	serviceName := s.ServiceName
+	err := consul.Register(serviceName, listenIP, listenPort, *reg, time.Second * 30,  40)
+	if err != nil {
+		panic(err)
+	}
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", listenPort))
+	rdc,err := redisapi.InitRedisClient(redisHost,int(redisDB),maxRedisConn,6,true)
+	grpcSer := grpc.NewServer()
+	captchaSer := &service.Service{Redisc:rdc}
+	pb.RegisterCaptchaManagerServer(grpcSer,captchaSer)
+	mlog.Info("start captcha service ok.")
+	go grpcSer.Serve(lis)
+}
 
 func registerService(s utils.ServerInfo,listenIP string){
 	redisHost := s.RedisConfig.Host

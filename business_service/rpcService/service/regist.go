@@ -29,7 +29,7 @@ func (s *Service )GetRegCaptcha(ctx context.Context,req *pb.RegCaptchaC2S)(*pb.R
 	}
 	rc := pb.NewCaptchaManagerClient(conn)
 	getCaptchaS2C := &pb.GetCaptchaS2C{}
-	getCaptchaS2C,err := rc.GetCaptcha(context.Background(),&pb.GetCaptchaC2S{Type:utils.CaptchaTypeReg,Key:req.PhoneNumber})
+	getCaptchaS2C,err := rc.GetCaptcha(context.Background(),&pb.GetCaptchaC2S{Type:utils.CaptchaTypeReg,Key:strconv.FormatUint(req.PhoneNumber,10)})
 	if err != nil{
 		s2c.ErrCode = utils.ErrServer
 		return s2c,nil
@@ -50,6 +50,24 @@ func (s *Service) Register(ctx context.Context ,req *pb.RegisterC2S)(*pb.Registe
 	}
 	if s.Redisc.Exists(utils.AccountPhonePrefix + phoneStr) {
 		res.ErrCode = utils.ErrAccountExits
+		return res,nil
+	}
+
+	//check captcha
+	conn := rpclient.Get(utils.CaptchaSer)
+	if conn == nil {
+		res.ErrCode = utils.ErrServer
+		return res,nil
+	}
+	rc := pb.NewCaptchaManagerClient(conn)
+	checkCaptcha := &pb.CheckCaptchaC2S{Type:utils.CaptchaTypeReg,Key:strconv.FormatUint(req.PhoneNumber,10)}
+	checkCaptchac2s ,err := rc.CheckCaptcha(context.Background(), checkCaptcha)
+	if err !=nil{
+		res.ErrCode = utils.ErrServer
+		return res,nil
+	}
+	if checkCaptchac2s.ErrCode >0 {
+		res.ErrCode = checkCaptchac2s.ErrCode
 		return res,nil
 	}
 

@@ -15,3 +15,9 @@ Auth SERVICE
 Releation SERVICE
 ========
 1. Upload geography
+
+
+CaptchaService
+=========
+1. get captcha
+2. check captcha
