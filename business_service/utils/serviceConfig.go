@@ -4,12 +4,15 @@ const (
 	RegisterSer = "registerService"
 	RelationSer = "relationService"
 	AuthSer = "authService"
-
-
+	CaptchaSer = "captchaService"
 	SessionConfig = "SessionConfig"
-
 	ServiceDefaultName = "service01"
 )
+
+const(
+	CaptchaTypeReg = 1  << iota
+)
+
 
 
 type  ServerInfo struct {

@@ -11,7 +11,7 @@ import (
 
 func (s *Service) AuthSession(ctx context.Context, c2s *pb.AuthC2S) (*pb.CommonS2C, error){
 	s2c := &pb.CommonS2C{}
-	userIDStr := strconv.FormatUint(c2s.UserId,10)
+	userIDStr := strconv.FormatUint(c2s.UserID,10)
 	sessionKey := utils.AccountSessionPrefix +userIDStr
 	sessionByte ,err := s.Redisc.Get(sessionKey)
 	if err !=nil || len(sessionByte) == 0 || c2s.Session != string(sessionByte[:]) {
@@ -25,7 +25,7 @@ func (s *Service) AuthSession(ctx context.Context, c2s *pb.AuthC2S) (*pb.CommonS
 
 func (s *Service) GetSession(ctx context.Context, c2s *pb.GetSessionC2S) (*pb.GetSessionS2C, error){
 	s2c := &pb.GetSessionS2C{}
-	userIDStr := strconv.FormatUint(c2s.UserId,10)
+	userIDStr := strconv.FormatUint(c2s.UserID,10)
 	sessionKey := utils.AccountSessionPrefix +userIDStr
 	sessionByte ,err := s.Redisc.Get(sessionKey)
 	if err !=nil || len(sessionByte) == 0  {
@@ -37,7 +37,7 @@ func (s *Service) GetSession(ctx context.Context, c2s *pb.GetSessionC2S) (*pb.Ge
 	}
 	s.Redisc.Expire(sessionKey,utils.DaySecond)
 
-	s2c.UserId = c2s.UserId
+	s2c.UserID = c2s.UserID
 	s2c.Session = string(sessionByte[:])
 
 	return s2c,nil

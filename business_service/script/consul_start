@@ -1,2 +1,11 @@
 #!/bin/bash
-consul agent -advertise 172.16.7.119 -client 172.16.7.119 -ui -data-dir ./config -server -datacenter dc1 -bootstrap >> /dev/null &
+if [ "$(uname)" == "Darwin" ]; then
+    Host=`ifconfig en0|grep inet|grep -v inet6|awk '{print $2}'`        
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    Host=`ifconfig en0|grep inet|grep -v inet6|awk '{print $2}'`
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+    # Do something under Windows NT platform
+    echo "UNKNOW SYSTEM"
+fi
+
+consul agent -advertise ${Host} -client ${Host} -ui -data-dir ./config -server -datacenter dc1 -bootstrap >> /dev/null &

@@ -350,7 +350,7 @@ func (dec *Decoder) end() error {
 			return err
 		}
 	case reflect.Map:
-		// leave backward compatibility for access to maps by .
+		// websocket.Conn backward compatibility for access to maps by .
 		dec.traverseInMap(true)
 	}
 	if dec.values[0] == "" {

@@ -55,7 +55,7 @@ func InfoGet(c *iris.Context){
 		return
 	}
 
-	c2s := &pb.UserInfoGetC2S{TargetUserId:userID}
+	c2s := &pb.UserInfoGetC2S{TargetUserID:userID}
 	rc := pb.NewUserInfoManagerClient(conn)
 	s2c, err = rc.UserInfoGet(context.Background(), c2s)
 	utils.PrintErr(err)

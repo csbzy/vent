@@ -14,7 +14,7 @@ import (
 func (s *Service) RecentContactGet(ctx context.Context, c2s *pb.RecentContactGetC2S) (*pb.RecentContactGetS2C, error){
 	mlog.Info("do upload user geo:%v",c2s)
 	s2c := &pb.RecentContactGetS2C{}
-	userIDStr := strconv.FormatUint(c2s.UserId,10)
+	userIDStr := strconv.FormatUint(c2s.UserID,10)
 	recentContacts,err :=s.Redisc.Lrange(utils.RecentContactPrefix+userIDStr,0,-1)
 	if err!=nil{
 		mlog.Error(err)
@@ -33,7 +33,7 @@ func (s *Service) RecentContactGet(ctx context.Context, c2s *pb.RecentContactGet
 
 	for _,contactID := range recentContacts{
 		//@对每一个最近联系人进行一次grpc请求,可以优化为合并请求
-		userInfoGet.TargetUserId,err = strconv.ParseUint(contactID.(string),10,64)
+		userInfoGet.TargetUserID,err = strconv.ParseUint(contactID.(string),10,64)
 		if err != nil {
 			mlog.Error(err)
 			continue
@@ -42,7 +42,7 @@ func (s *Service) RecentContactGet(ctx context.Context, c2s *pb.RecentContactGet
 		if err !=nil{
 			continue
 		}
-		contacts = append(contacts,&pb.Friend{UserId:userInfoGets2c.UserId,Signature:userInfoGets2c.Signature})
+		contacts = append(contacts,&pb.Friend{UserID:userInfoGets2c.UserID,Signature:userInfoGets2c.Signature})
 
 	}
 

@@ -14,7 +14,7 @@ func (s *Service) UserInfoModify(ctx context.Context ,req *pb.UserInfoModifyC2S,
 
 	mlog.Info("request info modify:%v",*req)
 
-	userInfoKey := utils.UserInfoHashPrefix +  strconv.FormatUint(req.UserId,10)
+	userInfoKey := utils.UserInfoHashPrefix +  strconv.FormatUint(req.UserID,10)
 	res := &pb.UserInfoModifyS2C{}
 	if !s.Redisc.Exists(userInfoKey){
 		res.ErrCode = utils.ErrAccountNotExits
@@ -43,7 +43,7 @@ func (s *Service) UserInfoGet(ctx context.Context,req *pb.UserInfoGetC2S)(*pb.Us
 
 	mlog.Info("request get user info:%v",req)
 	res := &pb.UserInfoGetS2C{}
-	userInfoKey := utils.UserInfoHashPrefix +  strconv.FormatUint(req.TargetUserId,10)
+	userInfoKey := utils.UserInfoHashPrefix +  strconv.FormatUint(req.TargetUserID,10)
 	userInfo,err := s.Redisc.HMget(userInfoKey,"nickname","sex","city","signature")
 	if err != nil {
 		return res,err

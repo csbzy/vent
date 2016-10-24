@@ -10,6 +10,8 @@ It is generated from these files:
 	rpc.proto
 
 It has these top-level messages:
+	RegCaptchaC2S
+	RegCaptchaS2C
 	RegisterC2S
 	RegisterS2C
 	LoginC2S
@@ -26,6 +28,10 @@ It has these top-level messages:
 	AuthC2S
 	GetSessionC2S
 	GetSessionS2C
+	GetCaptchaC2S
+	GetCaptchaS2C
+	CheckCaptchaC2S
+	CheckCaptchaS2C
 */
 package proto
 
@@ -44,52 +50,72 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto1.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type RegCaptchaC2S struct {
+	PhoneNumber uint64 `protobuf:"varint,1,opt,name=phoneNumber" json:"phoneNumber,omitempty"`
+}
+
+func (m *RegCaptchaC2S) Reset()                    { *m = RegCaptchaC2S{} }
+func (m *RegCaptchaC2S) String() string            { return proto1.CompactTextString(m) }
+func (*RegCaptchaC2S) ProtoMessage()               {}
+func (*RegCaptchaC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+
+type RegCaptchaS2C struct {
+	ErrCode uint32 `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
+	Captcha uint32 `protobuf:"varint,2,opt,name=captcha" json:"captcha,omitempty"`
+}
+
+func (m *RegCaptchaS2C) Reset()                    { *m = RegCaptchaS2C{} }
+func (m *RegCaptchaS2C) String() string            { return proto1.CompactTextString(m) }
+func (*RegCaptchaS2C) ProtoMessage()               {}
+func (*RegCaptchaS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+
 type RegisterC2S struct {
-	PhoneNumber uint64 `protobuf:"varint,1,opt,name=phone_number,json=phoneNumber" json:"phone_number,omitempty"`
+	PhoneNumber uint64 `protobuf:"varint,1,opt,name=phoneNumber" json:"phoneNumber,omitempty"`
 	Password    string `protobuf:"bytes,2,opt,name=password" json:"password,omitempty"`
-	Sex         uint32 `protobuf:"varint,3,opt,name=sex" json:"sex,omitempty"`
+	Captcha     uint32 `protobuf:"varint,3,opt,name=captcha" json:"captcha,omitempty"`
+	Sex         uint32 `protobuf:"varint,4,opt,name=sex" json:"sex,omitempty"`
 }
 
 func (m *RegisterC2S) Reset()                    { *m = RegisterC2S{} }
 func (m *RegisterC2S) String() string            { return proto1.CompactTextString(m) }
 func (*RegisterC2S) ProtoMessage()               {}
-func (*RegisterC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*RegisterC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
 type RegisterS2C struct {
-	ErrCode uint32 `protobuf:"varint,1,opt,name=err_code,json=errCode" json:"err_code,omitempty"`
-	UserId  uint64 `protobuf:"varint,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	ErrCode uint32 `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
+	UserID  uint64 `protobuf:"varint,2,opt,name=userID" json:"userID,omitempty"`
 	Session string `protobuf:"bytes,3,opt,name=session" json:"session,omitempty"`
 }
 
 func (m *RegisterS2C) Reset()                    { *m = RegisterS2C{} }
 func (m *RegisterS2C) String() string            { return proto1.CompactTextString(m) }
 func (*RegisterS2C) ProtoMessage()               {}
-func (*RegisterS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (*RegisterS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
 type LoginC2S struct {
-	PhoneNumber uint64 `protobuf:"varint,1,opt,name=phone_number,json=phoneNumber" json:"phone_number,omitempty"`
+	PhoneNumber uint64 `protobuf:"varint,1,opt,name=phoneNumber" json:"phoneNumber,omitempty"`
 	Password    string `protobuf:"bytes,2,opt,name=password" json:"password,omitempty"`
 }
 
 func (m *LoginC2S) Reset()                    { *m = LoginC2S{} }
 func (m *LoginC2S) String() string            { return proto1.CompactTextString(m) }
 func (*LoginC2S) ProtoMessage()               {}
-func (*LoginC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (*LoginC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
 
 type LoginS2C struct {
-	ErrCode uint32 `protobuf:"varint,1,opt,name=err_code,json=errCode" json:"err_code,omitempty"`
-	UserId  uint64 `protobuf:"varint,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	ErrCode uint32 `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
+	UserID  uint64 `protobuf:"varint,2,opt,name=userID" json:"userID,omitempty"`
 	Session string `protobuf:"bytes,3,opt,name=session" json:"session,omitempty"`
 }
 
 func (m *LoginS2C) Reset()                    { *m = LoginS2C{} }
 func (m *LoginS2C) String() string            { return proto1.CompactTextString(m) }
 func (*LoginS2C) ProtoMessage()               {}
-func (*LoginS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+func (*LoginS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
 // 用户信息修改
 type UserInfoModifyC2S struct {
-	UserId    uint64 `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserID    uint64 `protobuf:"varint,1,opt,name=userID" json:"userID,omitempty"`
 	Nickname  string `protobuf:"bytes,2,opt,name=nickname" json:"nickname,omitempty"`
 	Signature string `protobuf:"bytes,3,opt,name=signature" json:"signature,omitempty"`
 	City      string `protobuf:"bytes,4,opt,name=city" json:"city,omitempty"`
@@ -98,29 +124,29 @@ type UserInfoModifyC2S struct {
 func (m *UserInfoModifyC2S) Reset()                    { *m = UserInfoModifyC2S{} }
 func (m *UserInfoModifyC2S) String() string            { return proto1.CompactTextString(m) }
 func (*UserInfoModifyC2S) ProtoMessage()               {}
-func (*UserInfoModifyC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+func (*UserInfoModifyC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
 
 type UserInfoModifyS2C struct {
-	ErrCode uint32 `protobuf:"varint,1,opt,name=err_code,json=errCode" json:"err_code,omitempty"`
+	ErrCode uint32 `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
 }
 
 func (m *UserInfoModifyS2C) Reset()                    { *m = UserInfoModifyS2C{} }
 func (m *UserInfoModifyS2C) String() string            { return proto1.CompactTextString(m) }
 func (*UserInfoModifyS2C) ProtoMessage()               {}
-func (*UserInfoModifyS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+func (*UserInfoModifyS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
 
 type UserInfoGetC2S struct {
-	TargetUserId uint64 `protobuf:"varint,1,opt,name=target_user_id,json=targetUserId" json:"target_user_id,omitempty"`
+	TargetUserID uint64 `protobuf:"varint,1,opt,name=target_userID,json=targetUserID" json:"target_userID,omitempty"`
 }
 
 func (m *UserInfoGetC2S) Reset()                    { *m = UserInfoGetC2S{} }
 func (m *UserInfoGetC2S) String() string            { return proto1.CompactTextString(m) }
 func (*UserInfoGetC2S) ProtoMessage()               {}
-func (*UserInfoGetC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+func (*UserInfoGetC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
 
 type UserInfoGetS2C struct {
-	ErrCode   uint32 `protobuf:"varint,1,opt,name=err_code,json=errCode" json:"err_code,omitempty"`
-	UserId    uint64 `protobuf:"varint,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	ErrCode   uint32 `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
+	UserID    uint64 `protobuf:"varint,2,opt,name=userID" json:"userID,omitempty"`
 	Nickname  string `protobuf:"bytes,3,opt,name=nickname" json:"nickname,omitempty"`
 	Signature string `protobuf:"bytes,4,opt,name=signature" json:"signature,omitempty"`
 	City      string `protobuf:"bytes,5,opt,name=city" json:"city,omitempty"`
@@ -130,11 +156,11 @@ type UserInfoGetS2C struct {
 func (m *UserInfoGetS2C) Reset()                    { *m = UserInfoGetS2C{} }
 func (m *UserInfoGetS2C) String() string            { return proto1.CompactTextString(m) }
 func (*UserInfoGetS2C) ProtoMessage()               {}
-func (*UserInfoGetS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
+func (*UserInfoGetS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
 
 // 用户关系相关
 type GeoUploadC2S struct {
-	UserId    uint64  `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserID    uint64  `protobuf:"varint,1,opt,name=userID" json:"userID,omitempty"`
 	Longitude float64 `protobuf:"fixed64,2,opt,name=longitude" json:"longitude,omitempty"`
 	Latitude  float64 `protobuf:"fixed64,3,opt,name=latitude" json:"latitude,omitempty"`
 }
@@ -142,35 +168,35 @@ type GeoUploadC2S struct {
 func (m *GeoUploadC2S) Reset()                    { *m = GeoUploadC2S{} }
 func (m *GeoUploadC2S) String() string            { return proto1.CompactTextString(m) }
 func (*GeoUploadC2S) ProtoMessage()               {}
-func (*GeoUploadC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
+func (*GeoUploadC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
 
 type CommonS2C struct {
-	ErrCode uint32 `protobuf:"varint,1,opt,name=err_code,json=errCode" json:"err_code,omitempty"`
+	ErrCode uint32 `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
 }
 
 func (m *CommonS2C) Reset()                    { *m = CommonS2C{} }
 func (m *CommonS2C) String() string            { return proto1.CompactTextString(m) }
 func (*CommonS2C) ProtoMessage()               {}
-func (*CommonS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
+func (*CommonS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
 
 type RecentContactGetC2S struct {
-	UserId uint64 `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserID uint64 `protobuf:"varint,1,opt,name=userID" json:"userID,omitempty"`
 }
 
 func (m *RecentContactGetC2S) Reset()                    { *m = RecentContactGetC2S{} }
 func (m *RecentContactGetC2S) String() string            { return proto1.CompactTextString(m) }
 func (*RecentContactGetC2S) ProtoMessage()               {}
-func (*RecentContactGetC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
+func (*RecentContactGetC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
 
 type RecentContactGetS2C struct {
-	ErrCode uint32    `protobuf:"varint,1,opt,name=err_code,json=errCode" json:"err_code,omitempty"`
+	ErrCode uint32    `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
 	Friends []*Friend `protobuf:"bytes,2,rep,name=friends" json:"friends,omitempty"`
 }
 
 func (m *RecentContactGetS2C) Reset()                    { *m = RecentContactGetS2C{} }
 func (m *RecentContactGetS2C) String() string            { return proto1.CompactTextString(m) }
 func (*RecentContactGetS2C) ProtoMessage()               {}
-func (*RecentContactGetS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
+func (*RecentContactGetS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
 
 func (m *RecentContactGetS2C) GetFriends() []*Friend {
 	if m != nil {
@@ -180,50 +206,92 @@ func (m *RecentContactGetS2C) GetFriends() []*Friend {
 }
 
 type Friend struct {
-	UserId    uint64 `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserID    uint64 `protobuf:"varint,1,opt,name=userID" json:"userID,omitempty"`
 	Signature string `protobuf:"bytes,2,opt,name=signature" json:"signature,omitempty"`
 }
 
 func (m *Friend) Reset()                    { *m = Friend{} }
 func (m *Friend) String() string            { return proto1.CompactTextString(m) }
 func (*Friend) ProtoMessage()               {}
-func (*Friend) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
+func (*Friend) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{14} }
 
 type AuthC2S struct {
-	UserId  uint64 `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserID  uint64 `protobuf:"varint,1,opt,name=userID" json:"userID,omitempty"`
 	Session string `protobuf:"bytes,2,opt,name=session" json:"session,omitempty"`
 }
 
 func (m *AuthC2S) Reset()                    { *m = AuthC2S{} }
 func (m *AuthC2S) String() string            { return proto1.CompactTextString(m) }
 func (*AuthC2S) ProtoMessage()               {}
-func (*AuthC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
+func (*AuthC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{15} }
 
 type GetSessionC2S struct {
-	UserId uint64 `protobuf:"varint,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserID uint64 `protobuf:"varint,1,opt,name=userID" json:"userID,omitempty"`
 }
 
 func (m *GetSessionC2S) Reset()                    { *m = GetSessionC2S{} }
 func (m *GetSessionC2S) String() string            { return proto1.CompactTextString(m) }
 func (*GetSessionC2S) ProtoMessage()               {}
-func (*GetSessionC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{14} }
+func (*GetSessionC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{16} }
 
 type GetSessionS2C struct {
-	ErrCode uint32 `protobuf:"varint,1,opt,name=err_code,json=errCode" json:"err_code,omitempty"`
-	UserId  uint64 `protobuf:"varint,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	ErrCode uint32 `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
+	UserID  uint64 `protobuf:"varint,2,opt,name=userID" json:"userID,omitempty"`
 	Session string `protobuf:"bytes,3,opt,name=session" json:"session,omitempty"`
 }
 
 func (m *GetSessionS2C) Reset()                    { *m = GetSessionS2C{} }
 func (m *GetSessionS2C) String() string            { return proto1.CompactTextString(m) }
 func (*GetSessionS2C) ProtoMessage()               {}
-func (*GetSessionS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{15} }
+func (*GetSessionS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{17} }
+
+type GetCaptchaC2S struct {
+	Type uint32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Key  uint64 `protobuf:"varint,2,opt,name=key" json:"key,omitempty"`
+}
+
+func (m *GetCaptchaC2S) Reset()                    { *m = GetCaptchaC2S{} }
+func (m *GetCaptchaC2S) String() string            { return proto1.CompactTextString(m) }
+func (*GetCaptchaC2S) ProtoMessage()               {}
+func (*GetCaptchaC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{18} }
+
+type GetCaptchaS2C struct {
+	ErrCode uint32 `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
+	Captcha uint32 `protobuf:"varint,2,opt,name=captcha" json:"captcha,omitempty"`
+}
+
+func (m *GetCaptchaS2C) Reset()                    { *m = GetCaptchaS2C{} }
+func (m *GetCaptchaS2C) String() string            { return proto1.CompactTextString(m) }
+func (*GetCaptchaS2C) ProtoMessage()               {}
+func (*GetCaptchaS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{19} }
+
+type CheckCaptchaC2S struct {
+	Type    uint32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Key     uint64 `protobuf:"varint,2,opt,name=key" json:"key,omitempty"`
+	Captcha uint32 `protobuf:"varint,3,opt,name=captcha" json:"captcha,omitempty"`
+}
+
+func (m *CheckCaptchaC2S) Reset()                    { *m = CheckCaptchaC2S{} }
+func (m *CheckCaptchaC2S) String() string            { return proto1.CompactTextString(m) }
+func (*CheckCaptchaC2S) ProtoMessage()               {}
+func (*CheckCaptchaC2S) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{20} }
+
+type CheckCaptchaS2C struct {
+	ErrCode uint32 `protobuf:"varint,1,opt,name=errCode" json:"errCode,omitempty"`
+}
+
+func (m *CheckCaptchaS2C) Reset()                    { *m = CheckCaptchaS2C{} }
+func (m *CheckCaptchaS2C) String() string            { return proto1.CompactTextString(m) }
+func (*CheckCaptchaS2C) ProtoMessage()               {}
+func (*CheckCaptchaS2C) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{21} }
 
 func init() {
-	proto1.RegisterType((*RegisterC2S)(nil), "proto.RegisterC2s")
-	proto1.RegisterType((*RegisterS2C)(nil), "proto.RegisterS2c")
-	proto1.RegisterType((*LoginC2S)(nil), "proto.LoginC2s")
-	proto1.RegisterType((*LoginS2C)(nil), "proto.LoginS2c")
+	proto1.RegisterType((*RegCaptchaC2S)(nil), "proto.RegCaptchaC2S")
+	proto1.RegisterType((*RegCaptchaS2C)(nil), "proto.RegCaptchaS2C")
+	proto1.RegisterType((*RegisterC2S)(nil), "proto.RegisterC2S")
+	proto1.RegisterType((*RegisterS2C)(nil), "proto.RegisterS2C")
+	proto1.RegisterType((*LoginC2S)(nil), "proto.LoginC2S")
+	proto1.RegisterType((*LoginS2C)(nil), "proto.LoginS2C")
 	proto1.RegisterType((*UserInfoModifyC2S)(nil), "proto.UserInfoModifyC2S")
 	proto1.RegisterType((*UserInfoModifyS2C)(nil), "proto.UserInfoModifyS2C")
 	proto1.RegisterType((*UserInfoGetC2S)(nil), "proto.UserInfoGetC2S")
@@ -236,40 +304,48 @@ func init() {
 	proto1.RegisterType((*AuthC2S)(nil), "proto.AuthC2S")
 	proto1.RegisterType((*GetSessionC2S)(nil), "proto.GetSessionC2S")
 	proto1.RegisterType((*GetSessionS2C)(nil), "proto.GetSessionS2C")
+	proto1.RegisterType((*GetCaptchaC2S)(nil), "proto.GetCaptchaC2S")
+	proto1.RegisterType((*GetCaptchaS2C)(nil), "proto.GetCaptchaS2C")
+	proto1.RegisterType((*CheckCaptchaC2S)(nil), "proto.CheckCaptchaC2S")
+	proto1.RegisterType((*CheckCaptchaS2C)(nil), "proto.CheckCaptchaS2C")
 }
 
 func init() { proto1.RegisterFile("client.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 473 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x53, 0x51, 0x8b, 0xd3, 0x40,
-	0x10, 0x26, 0x4d, 0xae, 0x69, 0xa7, 0xed, 0xa1, 0xeb, 0x83, 0x51, 0x7c, 0xd0, 0x45, 0xb4, 0x4f,
-	0x7d, 0x88, 0xe0, 0x93, 0x20, 0x12, 0xf0, 0x38, 0x50, 0x1f, 0xb6, 0x1c, 0x28, 0xa2, 0x25, 0x97,
-	0x4c, 0x73, 0x8b, 0xed, 0x6e, 0xd9, 0xdd, 0xa0, 0xe7, 0xef, 0xf1, 0x87, 0xba, 0xd9, 0x34, 0x97,
-	0xf6, 0xa4, 0x29, 0xa8, 0x4f, 0xd9, 0xef, 0x9b, 0xc9, 0xcc, 0x37, 0xdf, 0xee, 0xc0, 0x38, 0x5b,
-	0x71, 0x14, 0x66, 0xb6, 0x51, 0xd2, 0x48, 0x72, 0xe2, 0x3e, 0xf4, 0x2b, 0x8c, 0x18, 0x16, 0x5c,
-	0x1b, 0x54, 0x49, 0xac, 0xc9, 0x13, 0x18, 0x6f, 0xae, 0xa4, 0xc0, 0x85, 0x28, 0xd7, 0x97, 0xa8,
-	0x22, 0xef, 0xb1, 0x37, 0x0d, 0xd8, 0xc8, 0x71, 0x1f, 0x1c, 0x45, 0x1e, 0xc2, 0x60, 0x93, 0x6a,
-	0xfd, 0x5d, 0xaa, 0x3c, 0xea, 0xd9, 0xf0, 0x90, 0xdd, 0x60, 0x72, 0x07, 0x7c, 0x8d, 0x3f, 0x22,
-	0xdf, 0xd2, 0x13, 0x56, 0x1d, 0xe9, 0xe7, 0xb6, 0xfe, 0x3c, 0xce, 0xc8, 0x03, 0x18, 0xa0, 0x52,
-	0x8b, 0x4c, 0xe6, 0xe8, 0x6a, 0x4f, 0x58, 0x68, 0x71, 0x62, 0x21, 0xb9, 0x0f, 0x61, 0xa9, 0x51,
-	0x2d, 0x78, 0x5d, 0x36, 0x60, 0xfd, 0x0a, 0x9e, 0xe7, 0x24, 0x82, 0x50, 0xa3, 0xd6, 0x5c, 0x0a,
-	0x57, 0x78, 0xc8, 0x1a, 0x48, 0xcf, 0x61, 0xf0, 0x4e, 0x16, 0x5c, 0xfc, 0xbb, 0x72, 0xfa, 0x71,
-	0x5b, 0xea, 0xff, 0x8b, 0xfc, 0x09, 0x77, 0x2f, 0xaa, 0x1c, 0xb1, 0x94, 0xef, 0x65, 0xce, 0x97,
-	0xd7, 0x49, 0x3c, 0xdf, 0xad, 0xe3, 0xed, 0xd5, 0xb1, 0x1a, 0x05, 0xcf, 0xbe, 0x89, 0x74, 0x8d,
-	0x8d, 0xc6, 0x06, 0x93, 0x47, 0x30, 0xd4, 0xbc, 0x10, 0xa9, 0x29, 0x15, 0x6e, 0xbb, 0xb4, 0x04,
-	0x21, 0x10, 0x64, 0xdc, 0x5c, 0x47, 0x81, 0x0b, 0xb8, 0x33, 0x9d, 0xdd, 0xee, 0x3d, 0x8f, 0x93,
-	0x8e, 0xf1, 0xe8, 0x4b, 0x38, 0x6d, 0xf2, 0xcf, 0xd0, 0x54, 0x42, 0x9f, 0xc2, 0xa9, 0x49, 0x55,
-	0x81, 0x66, 0xb1, 0xaf, 0x77, 0x5c, 0xb3, 0x2e, 0x3b, 0xa7, 0xbf, 0xbc, 0xbd, 0x1f, 0xbb, 0xbb,
-	0x1c, 0x36, 0x71, 0x77, 0x78, 0xbf, 0x6b, 0xf8, 0xe0, 0xd0, 0xf0, 0x27, 0xed, 0xf0, 0xcd, 0x63,
-	0xec, 0xb7, 0x8f, 0x31, 0x85, 0xf1, 0x19, 0xca, 0x8b, 0xcd, 0x4a, 0xa6, 0x79, 0xe7, 0x2d, 0xd8,
-	0x66, 0x2b, 0x29, 0x0a, 0x6e, 0xca, 0xbc, 0xbe, 0x06, 0x8f, 0xb5, 0x44, 0x25, 0x73, 0x95, 0x9a,
-	0x3a, 0xe8, 0xbb, 0xe0, 0x0d, 0xa6, 0xcf, 0x60, 0x98, 0xc8, 0xf5, 0x5a, 0x8a, 0x23, 0x4e, 0xcf,
-	0xe0, 0x1e, 0xc3, 0xcc, 0xae, 0x63, 0x22, 0x85, 0x49, 0x33, 0xb3, 0xb5, 0xfb, 0x90, 0x22, 0xfa,
-	0xe9, 0xcf, 0xfc, 0x23, 0x2e, 0x3f, 0x87, 0x70, 0xa9, 0xec, 0xc2, 0xe7, 0xda, 0x4e, 0xe0, 0x4f,
-	0x47, 0xf1, 0xa4, 0xde, 0xfc, 0xd9, 0x5b, 0xc7, 0xb2, 0x26, 0x4a, 0x5f, 0x43, 0xbf, 0xa6, 0x3a,
-	0xfd, 0x68, 0xcd, 0xef, 0xdd, 0x32, 0x9f, 0xbe, 0x82, 0xf0, 0x4d, 0x69, 0xae, 0x3a, 0x1d, 0xdd,
-	0xd9, 0x8f, 0xde, 0xfe, 0x7e, 0x4c, 0x61, 0x52, 0x0d, 0x53, 0xa3, 0x4e, 0x0f, 0xbe, 0xec, 0x66,
-	0xfe, 0xed, 0x1b, 0x3b, 0xb8, 0xa8, 0x97, 0x7d, 0x67, 0xcf, 0x8b, 0xdf, 0x01, 0x00, 0x00, 0xff,
-	0xff, 0x99, 0x14, 0xd7, 0x61, 0x28, 0x05, 0x00, 0x00,
+	// 532 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x54, 0x5d, 0x6b, 0xd4, 0x40,
+	0x14, 0x65, 0x37, 0xe9, 0x6e, 0x73, 0x77, 0xe3, 0x47, 0x04, 0x59, 0xc4, 0x87, 0x32, 0x22, 0x2d,
+	0x88, 0x05, 0x57, 0xfa, 0x24, 0x08, 0x92, 0x62, 0x15, 0x54, 0x70, 0x4a, 0x45, 0xf1, 0x41, 0xd3,
+	0x64, 0x36, 0x3b, 0xec, 0xee, 0x4c, 0x98, 0x99, 0x50, 0xf3, 0x77, 0xfc, 0xa5, 0x66, 0x26, 0x49,
+	0x93, 0x54, 0x76, 0xd0, 0xb6, 0x4f, 0x99, 0xfb, 0x31, 0xe7, 0x9c, 0x7b, 0x73, 0xe7, 0xc2, 0x34,
+	0x5e, 0x53, 0xc2, 0xd4, 0x61, 0x26, 0xb8, 0xe2, 0xc1, 0x8e, 0xf9, 0xa0, 0x17, 0xe0, 0x63, 0x92,
+	0x86, 0x51, 0xa6, 0xe2, 0x65, 0x14, 0xce, 0x4f, 0x83, 0x3d, 0x98, 0x64, 0x4b, 0xce, 0xc8, 0xa7,
+	0x7c, 0x73, 0x4e, 0xc4, 0x6c, 0xb0, 0x37, 0x38, 0x70, 0x71, 0xd7, 0x85, 0xc2, 0xee, 0x95, 0xd3,
+	0x79, 0x18, 0xcc, 0x60, 0x4c, 0x84, 0x08, 0x79, 0x42, 0x4c, 0xba, 0x8f, 0x1b, 0x53, 0x47, 0xe2,
+	0x2a, 0x6f, 0x36, 0xac, 0x22, 0xb5, 0x89, 0x2e, 0x60, 0x52, 0x82, 0x50, 0xa9, 0x88, 0xf8, 0x27,
+	0xd6, 0xe0, 0x11, 0xec, 0x66, 0x91, 0x94, 0x17, 0x5c, 0x24, 0x06, 0xcb, 0xc3, 0x97, 0x76, 0x97,
+	0xc6, 0xe9, 0xd1, 0x04, 0xf7, 0xc0, 0x91, 0xe4, 0xd7, 0xcc, 0x35, 0x5e, 0x7d, 0x44, 0xdf, 0x5a,
+	0x62, 0xbb, 0xf6, 0x87, 0x30, 0xca, 0x25, 0x11, 0xef, 0x8f, 0x0d, 0x9d, 0x8b, 0x6b, 0x4b, 0xdf,
+	0x90, 0x44, 0x4a, 0xca, 0x99, 0x21, 0xf3, 0x70, 0x63, 0xa2, 0x77, 0xb0, 0xfb, 0x81, 0xa7, 0x94,
+	0xdd, 0xb8, 0x20, 0xf4, 0xa5, 0x46, 0xba, 0x6d, 0x85, 0x05, 0xdc, 0x3f, 0xd3, 0x39, 0x6c, 0xc1,
+	0x3f, 0xf2, 0x84, 0x2e, 0x0a, 0x2d, 0xb5, 0x85, 0x19, 0xf4, 0x60, 0x4a, 0x81, 0x8c, 0xc6, 0x2b,
+	0x16, 0x6d, 0x48, 0x23, 0xb0, 0xb1, 0x83, 0xc7, 0xe0, 0x49, 0x9a, 0xb2, 0x48, 0xe5, 0x82, 0xd4,
+	0x24, 0xad, 0x23, 0x08, 0xc0, 0x8d, 0xa9, 0x2a, 0x4c, 0xdb, 0x3d, 0x6c, 0xce, 0xe8, 0xf9, 0x55,
+	0x6a, 0x6b, 0x6d, 0xe8, 0x08, 0xee, 0x34, 0xe9, 0x27, 0x44, 0x69, 0x99, 0x4f, 0xc0, 0x57, 0x91,
+	0x48, 0x89, 0xfa, 0xd1, 0x53, 0x3b, 0xad, 0x9c, 0x26, 0xf9, 0x18, 0xfd, 0x1e, 0xf4, 0xee, 0x5d,
+	0xaf, 0x7f, 0xdd, 0xc2, 0x1d, 0x5b, 0xe1, 0xee, 0xb6, 0xc2, 0x77, 0xda, 0xc2, 0x9b, 0x11, 0x1c,
+	0xb5, 0x23, 0xf8, 0x13, 0xa6, 0x27, 0x84, 0x9f, 0x65, 0x6b, 0x1e, 0x25, 0xb6, 0x1f, 0x50, 0x72,
+	0xad, 0x39, 0x4b, 0xa9, 0xca, 0x93, 0xea, 0x0f, 0x0c, 0x70, 0xeb, 0xd0, 0x2a, 0xd7, 0x91, 0xaa,
+	0x82, 0x8e, 0x09, 0x5e, 0xda, 0xe8, 0x29, 0x78, 0x21, 0xdf, 0x6c, 0xb8, 0x7d, 0x80, 0xca, 0x7f,
+	0xf2, 0x00, 0x93, 0xb8, 0xdc, 0x09, 0x21, 0x67, 0x2a, 0x8a, 0x55, 0xdd, 0xe9, 0x2d, 0x7a, 0xd0,
+	0xd7, 0xbf, 0xd3, 0xed, 0x0d, 0xde, 0x87, 0xf1, 0x42, 0x94, 0x3b, 0x27, 0x91, 0xa5, 0x7c, 0xe7,
+	0x60, 0x32, 0xf7, 0xab, 0xe5, 0x73, 0xf8, 0xd6, 0x78, 0x71, 0x13, 0x45, 0xaf, 0x61, 0x54, 0xb9,
+	0x6c, 0xbd, 0x68, 0xfb, 0x3e, 0xbc, 0xd2, 0x77, 0xf4, 0x0a, 0xc6, 0x6f, 0x72, 0xb5, 0xb4, 0x35,
+	0xb3, 0xf3, 0x28, 0x86, 0xfd, 0x47, 0xb1, 0x0f, 0xbe, 0xae, 0xa4, 0xb2, 0x6c, 0xf5, 0x7f, 0xef,
+	0x26, 0xde, 0xf6, 0xd3, 0x3c, 0x32, 0xe0, 0x9d, 0x45, 0x5c, 0xce, 0x92, 0x2a, 0xb2, 0x06, 0xd9,
+	0x9c, 0xf5, 0x2c, 0xad, 0x48, 0x51, 0x63, 0xea, 0xa3, 0x5e, 0xc6, 0xed, 0xb5, 0xeb, 0x2e, 0xe3,
+	0xcf, 0x70, 0x37, 0x5c, 0x92, 0x78, 0xf5, 0xbf, 0xec, 0xdb, 0x17, 0x2f, 0x7a, 0xd6, 0x87, 0xb4,
+	0x2a, 0x3b, 0x1f, 0x99, 0xa9, 0x78, 0xf9, 0x27, 0x00, 0x00, 0xff, 0xff, 0xb9, 0x66, 0x4f, 0xa4,
+	0xa2, 0x06, 0x00, 0x00,
 }

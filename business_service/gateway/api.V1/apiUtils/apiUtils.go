@@ -46,7 +46,7 @@ func Auth(userID uint64,session string) bool{
 	authConn := rpclient.Get(utils.AuthSer)
 
 	authSession := pb.NewSessionManagerClient(authConn)
-	authReq := &pb.AuthC2S{UserId:userID,Session:session}
+	authReq := &pb.AuthC2S{UserID:userID,Session:session}
 	authRes := &pb.CommonS2C{}
 	authRes,err := authSession.AuthSession(context.Background(),authReq)
 	if err !=nil || authRes.ErrCode > 0{

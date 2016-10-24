@@ -11,7 +11,7 @@ import (
 )
 
 
-//REGISTER FOR IS API FOR  /api/v1/user/register
+//REGISTER FOR IS API FOR  /api/v1/user/check_code/register
 func Register(c *iris.Context) {
 	body := c.PostBody()
 	c2s := &pb.RegisterC2S{}
@@ -43,12 +43,34 @@ func Register(c *iris.Context) {
 		apiUtils.SetBody(c,s2c)
 		return
 	}
-	session,errCode := getSession(s2c.UserId)
+	session,errCode := getSession(s2c.UserID)
 	if errCode > 0 {
 		s2c.ErrCode =  errCode
 		apiUtils.SetBody(c,s2c)
 		return
 	}
 	s2c.Session = session
+	apiUtils.SetBody(c,s2c)
+}
+
+func GetRegisterCaptcha(c * iris.Context){
+	phoneNumber := c.Param("phoneNumber")
+	c2s := &pb.RegCaptchaC2S{}
+	c2s.PhoneNumber = phoneNumber
+	s2c := &pb.RegCaptchaS2C{}
+
+	conn := rpclient.Get(utils.RegisterSer)
+	if conn == nil {
+		s2c.ErrCode = utils.ErrServer
+		apiUtils.SetBody(c,s2c)
+		return
+	}
+	rc := pb.NewRegisterClient(conn)
+	s2c ,err  := rc.GetRegCaptcha(context.Background(),c2s)
+	if err != nil {
+		s2c.ErrCode = utils.ErrServer
+		apiUtils.SetBody(c,s2c)
+		return
+	}
 	apiUtils.SetBody(c,s2c)
 }

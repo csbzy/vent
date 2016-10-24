@@ -2,12 +2,17 @@ syntax = "proto3";
 import "client.proto";
 package proto;
 
+service CaptchaManager{
+	rpc GetCaptcha(GetCaptchaC2S) returns (GetCaptchaS2C){}
+	rpc CheckCaptcha(CheckCaptchaC2S) returns (CheckCaptchaS2C){}
+}
 service Register {
-	rpc Register(RegisterC2s) returns (RegisterS2c){}
+	rpc Register(RegisterC2S) returns (RegisterS2C){}
+	rpc GetRegCaptcha(RegCaptchaC2S) returns (RegCaptchaS2C){}
 }
 
 service Login {
-	rpc Login(LoginC2s) returns (LoginS2c){}
+	rpc Login(LoginC2S) returns (LoginS2C){}
 }
 
 service UserInfoManager{

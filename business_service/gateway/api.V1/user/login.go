@@ -38,13 +38,13 @@ func Login(c *iris.Context) {
 		apiUtils.SetBody(c,s2c)
 		return
 	}
-	if s2c.ErrCode > 0 || s2c.UserId <= 0 {
+	if s2c.ErrCode > 0 || s2c.UserID <= 0 {
 		apiUtils.SetBody(c,s2c)
 		return
 	}
 
 
-	session, errCode := getSession(s2c.UserId)
+	session, errCode := getSession(s2c.UserID)
 	if errCode > 0 {
 		s2c.ErrCode = errCode
 		apiUtils.SetBody(c,s2c)
@@ -59,7 +59,7 @@ func Login(c *iris.Context) {
 func getSession(userID uint64) (string ,uint32){
 	authConn := rpclient.Get(utils.AuthSer)
 	getSession := pb.NewSessionManagerClient(authConn)
-	getSessionC2S := &pb.GetSessionC2S{UserId:userID}
+	getSessionC2S := &pb.GetSessionC2S{UserID:userID}
 	getSessionS2C := &pb.GetSessionS2C{}
 	getSessionS2C,err := getSession.GetSession(context.Background(),getSessionC2S)
 	if err != nil {

@@ -2,49 +2,59 @@ syntax = "proto3";
 package proto;
 
 
-message RegisterC2s{
-	uint64 phone_number =1;
+message RegCaptchaC2S {
+	uint64 phoneNumber =1;
+}
+message RegCaptchaS2C {
+	uint32 errCode = 1;
+	uint32 captcha = 2;
+}
+message RegisterC2S{
+	uint64 phoneNumber =1;
 	string password = 2;
-	uint32 sex = 3;
+	uint32 captcha = 3;
+	uint32 sex = 4;
 }
 
-message RegisterS2c{
-	uint32 err_code =1;
-	uint64 user_id =2;
+message RegisterS2C{
+	uint32 errCode =1;
+	uint64 userID =2;
 	string session =3;
 }
 
 
-message LoginC2s{
-	uint64 phone_number =1 ;
+
+
+message LoginC2S{
+	uint64 phoneNumber =1 ;
 	string password = 2;
 }
 
-message LoginS2c{
-	uint32 err_code=1;
-	uint64 user_id =2;
+message LoginS2C{
+	uint32 errCode=1;
+	uint64 userID =2;
 	string session =3;
 }
 
 //用户信息修改
 message UserInfoModifyC2S{
-	uint64 user_id = 1;
+	uint64 userID = 1;
 	string nickname  = 2;//名称
 	string signature =3;//个性签名
 	string city =4;     //居住城市
 }
 
 message UserInfoModifyS2C{
-	uint32 err_code =1;
+	uint32 errCode =1;
 }
 
 message UserInfoGetC2S{
-	uint64 target_user_id=1;
+	uint64 target_userID=1;
 }
 
 message UserInfoGetS2C{
-	uint32 err_code = 1;
-	uint64 user_id = 2;
+	uint32 errCode = 1;
+	uint64 userID = 2;
     string nickname  = 3;//名称
     string signature =4;//个性签名
     string city =5;     //居住城市
@@ -56,43 +66,65 @@ message UserInfoGetS2C{
 
 //用户关系相关
 message GeoUploadC2S{
-	uint64 user_id =1;
+	uint64 userID =1;
 	double longitude = 2;
 	double latitude =3;
 }
 
 message CommonS2C{
-	uint32 err_code = 1;
+	uint32 errCode = 1;
 }
 
 
 message RecentContactGetC2S{
-	uint64 user_id = 1;
+	uint64 userID = 1;
 }
 
 message RecentContactGetS2C{
-	uint32  err_code = 1;
+	uint32  errCode = 1;
 	repeated Friend friends=2;
 }
 
 message Friend{
-	uint64 user_id=1;
+	uint64 userID=1;
 	string signature=2;
 }
 
 
 
 message AuthC2S{
-	uint64 user_id =1;
+	uint64 userID =1;
 	string session =2;
 }
 
 message GetSessionC2S{
-	uint64 user_id = 1;
+	uint64 userID = 1;
 }
 
 message GetSessionS2C{
-	uint32 err_code = 1;
-	uint64 user_id =2 ;
+	uint32 errCode = 1;
+	uint64 userID =2 ;
 	string session =3;
+}
+
+
+
+message GetCaptchaC2S{
+	uint32 type =1; //1.reg 2.forget password
+	uint64 key =2 ;
+}
+
+message GetCaptchaS2C{
+	uint32 errCode =1;
+	uint32 captcha = 2;
+}
+
+message CheckCaptchaC2S{
+	uint32 type =1;
+	uint64 key =2;
+	uint32 captcha =3;
+}
+
+message CheckCaptchaS2C{
+	uint32 errCode =1;
 }

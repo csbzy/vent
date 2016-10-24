@@ -47,7 +47,7 @@ func (s *Service) Login(ctx context.Context ,req *pb.LoginC2S)(*pb.LoginS2C ,err
 		res.ErrCode = utils.ErrServer
 		return res,nil
 	}
-	res.UserId = userIDInt
+	res.UserID = userIDInt
 	return res,nil
 }
 
