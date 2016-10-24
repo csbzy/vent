@@ -8,6 +8,7 @@ import (
 	"time"
 	"github.com/kataras/go-websocket"
 	"github.com/chenshaobo/vent/business_service/gateway/api.V1/apiUtils"
+	"reflect"
 )
 
 type signal struct {
@@ -56,7 +57,7 @@ func SetupSignalApi() {
 				}else{
 					switch s.SignalType {
 					case "auth":
-						apiUtils.Auth(s.UserID,s.Session)
+						isAuth = apiUtils.Auth(s.UserID,s.Session)
 					default:
 						c.EmitMessage([]byte("401"))
 						c.Disconnect()

@@ -10,7 +10,7 @@ import(
 )
 
 var (
-	_defaultRClients RClients
+	_defaultRClients RClients //var will Automatic initialization to zero value
 	once sync.Once
 )
 
