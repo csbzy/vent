@@ -23,7 +23,7 @@ func Login(c *iris.Context) {
 		return
 	}
 
-	conn := rpclient.Get(utils.RegisterSer)
+	conn := rpclient.Get(utils.UserSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		apiUtils.SetBody(c,s2c)
@@ -31,13 +31,14 @@ func Login(c *iris.Context) {
 	}
 
 	rc := pb.NewLoginClient(conn)
-	s2c, err = rc.Login(context.Background(), c2s)
+	s2cTmp, err := rc.Login(context.Background(), c2s)
 
 	if err != nil {
 		s2c.ErrCode = utils.ErrServer
 		apiUtils.SetBody(c,s2c)
 		return
 	}
+	s2c =s2cTmp
 	if s2c.ErrCode > 0 || s2c.UserID <= 0 {
 		apiUtils.SetBody(c,s2c)
 		return

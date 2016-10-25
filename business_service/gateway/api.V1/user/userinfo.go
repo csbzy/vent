@@ -25,7 +25,7 @@ func InfoModify(c *iris.Context){
 		return
 	}
 
-	conn := rpclient.Get(utils.RegisterSer)
+	conn := rpclient.Get(utils.UserSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		apiUtils.SetBody(c,s2c)
@@ -33,9 +33,13 @@ func InfoModify(c *iris.Context){
 		return
 	}
 	rc := pb.NewUserInfoManagerClient(conn)
-	s2c, err = rc.UserInfoModify(context.Background(), c2s)
-	utils.PrintErr(err)
-	mlog.Info("s2c:%v",s2c)
+	s2cTmp, err := rc.UserInfoModify(context.Background(), c2s)
+	if err != nil{
+		s2c.ErrCode = utils.ErrServer
+		mlog.Error(err)
+		apiUtils.SetBody(c,s2c)
+	}
+	s2c = s2cTmp
 	apiUtils.SetBody(c,s2c)
 }
 
@@ -48,7 +52,7 @@ func InfoGet(c *iris.Context){
 		return
 	}
 
-	conn := rpclient.Get(utils.RegisterSer)
+	conn := rpclient.Get(utils.UserSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		apiUtils.SetBody(c,s2c)
@@ -57,8 +61,13 @@ func InfoGet(c *iris.Context){
 
 	c2s := &pb.UserInfoGetC2S{TargetUserID:userID}
 	rc := pb.NewUserInfoManagerClient(conn)
-	s2c, err = rc.UserInfoGet(context.Background(), c2s)
-	utils.PrintErr(err)
+	s2cTmp, err := rc.UserInfoGet(context.Background(), c2s)
+	if err != nil{
+		s2c.ErrCode = utils.ErrServer
+		mlog.Error(err)
+		apiUtils.SetBody(c,s2c)
+	}
+	s2c = s2cTmp
 	apiUtils.SetBody(c,s2c)
 }
 

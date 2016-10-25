@@ -1,7 +1,7 @@
 package utils
 
 const (
-	RegisterSer = "registerService"
+	UserSer = "userService"
 	RelationSer = "relationService"
 	AuthSer = "authService"
 	CaptchaSer = "captchaService"
@@ -10,7 +10,7 @@ const (
 )
 
 const(
-	CaptchaTypeReg = 1  << iota
+	CaptchaTypeReg = "captchaReg:"
 )
 
 

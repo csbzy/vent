@@ -22,8 +22,25 @@ message RegisterS2C{
 	string session =3;
 }
 
+//修改密码
+message PasswordCaptchaC2S{
+	uint64 phoneNumber =1;
+}
 
+message PasswordCaptchaS2C{
+	uint32 errCode = 1;
+	uint32 captcha =2;
+}
 
+message ChangePasswordC2S{
+	uint64 phoneNumber =1;
+	string password = 2;
+	uint32 captcha = 3;
+}
+
+message ChangePasswordS2C{
+	uint32 errCode =1;
+}
 
 message LoginC2S{
 	uint64 phoneNumber =1 ;
@@ -110,7 +127,7 @@ message GetSessionS2C{
 
 
 message GetCaptchaC2S{
-	uint32 type =1; //1.reg 2.forget password
+	string type =1; //reg /forget password
 	string key =2 ;
 }
 
@@ -120,7 +137,7 @@ message GetCaptchaS2C{
 }
 
 message CheckCaptchaC2S{
-	uint32 type =1;
+	string type =1;
 	string key =2;
 	uint32 captcha =3;
 }

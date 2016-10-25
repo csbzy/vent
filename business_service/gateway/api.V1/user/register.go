@@ -8,6 +8,8 @@ import (
 	"github.com/chenshaobo/vent/business_service/utils"
 	"golang.org/x/net/context"
 	"github.com/chenshaobo/vent/business_service/gateway/api.V1/apiUtils"
+	"strconv"
+	"github.com/jbrodriguez/mlog"
 )
 
 
@@ -23,22 +25,23 @@ func Register(c *iris.Context) {
 		apiUtils.SetBody(c,s2c)
 		return
 	}
-	conn := rpclient.Get(utils.RegisterSer)
+	conn := rpclient.Get(utils.UserSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		apiUtils.SetBody(c,s2c)
 		return
 	}
 	rc := pb.NewRegisterClient(conn)
-	s2c, err = rc.Register(context.Background(), c2s)
+	s2cTmp, err := rc.Register(context.Background(), c2s)
 	utils.PrintErr(err)
 	if err != nil {
 		s2c.ErrCode = utils.ErrServer
+		mlog.Error(err)
 		apiUtils.SetBody(c,s2c)
 		return
 	}
 
-
+	s2c = s2cTmp
 	if s2c.ErrCode > 0 {
 		apiUtils.SetBody(c,s2c)
 		return
@@ -56,21 +59,28 @@ func Register(c *iris.Context) {
 func GetRegisterCaptcha(c * iris.Context){
 	phoneNumber := c.Param("phoneNumber")
 	c2s := &pb.RegCaptchaC2S{}
-	c2s.PhoneNumber = phoneNumber
 	s2c := &pb.RegCaptchaS2C{}
+	phoneNumberUint,err := strconv.ParseUint(phoneNumber,10,64)
+	if err  != nil{
+		s2c.ErrCode = utils.ErrParams
+		apiUtils.SetBody(c,s2c)
+		return
+	}
 
-	conn := rpclient.Get(utils.RegisterSer)
+	c2s.PhoneNumber = phoneNumberUint
+	conn := rpclient.Get(utils.UserSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		apiUtils.SetBody(c,s2c)
 		return
 	}
 	rc := pb.NewRegisterClient(conn)
-	s2c ,err  := rc.GetRegCaptcha(context.Background(),c2s)
+	s2cTmp ,err  := rc.GetRegCaptcha(context.Background(),c2s)
 	if err != nil {
 		s2c.ErrCode = utils.ErrServer
+		mlog.Error(err)
 		apiUtils.SetBody(c,s2c)
 		return
 	}
-	apiUtils.SetBody(c,s2c)
+	apiUtils.SetBody(c,s2cTmp)
 }

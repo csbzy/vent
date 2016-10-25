@@ -9,6 +9,7 @@ import (
 	"github.com/chenshaobo/vent/business_service/utils"
 	"golang.org/x/net/context"
 	"github.com/chenshaobo/vent/business_service/gateway/api.V1/apiUtils"
+	"github.com/jbrodriguez/mlog"
 )
 
 func SetupGeoApi(){
@@ -39,7 +40,12 @@ func GeoUpload(c *iris.Context){
 		return
 	}
 	rc := pb.NewGeoManagerClient(conn)
-	s2c, err = rc.UserGeoUpload(context.Background(), c2s)
-	utils.PrintErr(err)
+	s2cTmp, err := rc.UserGeoUpload(context.Background(), c2s)
+	if err != nil{
+		s2c.ErrCode = utils.ErrServer
+		mlog.Error(err)
+		apiUtils.SetBody(c,s2c)
+	}
+	s2c = s2cTmp
 	apiUtils.SetBody(c,s2c)
 }

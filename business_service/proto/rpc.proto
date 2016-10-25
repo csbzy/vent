@@ -11,6 +11,10 @@ service Register {
 	rpc GetRegCaptcha(RegCaptchaC2S) returns (RegCaptchaS2C){}
 }
 
+service PasswordManager{
+	rpc GetPasswordCaptcha(PasswordCaptchaC2S) returns (PasswordCaptchaS2C){}
+	rpc ChangePassword(ChangePasswordC2S) returns (ChangePasswordS2C){}
+}
 service Login {
 	rpc Login(LoginC2S) returns (LoginS2C){}
 }

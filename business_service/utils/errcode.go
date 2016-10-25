@@ -8,5 +8,5 @@ const (
 	ErrPasswordWrong  //密码错误
 	ErrSessionNotMatch //session错误
 
-	ErrCaptchaNotMatch//验证码正确
+	ErrCaptchaNotMatch//验证码不正确
 )

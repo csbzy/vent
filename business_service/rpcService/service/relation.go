@@ -23,7 +23,7 @@ func (s *Service) RecentContactGet(ctx context.Context, c2s *pb.RecentContactGet
 	contacts := []*pb.Friend {}
 	userInfoGet := &pb.UserInfoGetC2S{}
 
-	conn := rpclient.Get(utils.RegisterSer)
+	conn := rpclient.Get(utils.UserSer)
 	if conn == nil {
 		s2c.ErrCode = utils.ErrServer
 		return s2c,nil

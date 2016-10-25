@@ -8,6 +8,7 @@ import (
 	"golang.org/x/net/context"
 	"github.com/chenshaobo/vent/business_service/gateway/api.V1/apiUtils"
 	//"github.com/jbrodriguez/mlog"
+	"github.com/jbrodriguez/mlog"
 )
 
 func SetupRelationApi(){
@@ -38,7 +39,12 @@ func GetFriends(c *iris.Context){
 		return
 	}
 	rc := pb.NewRelationClient(conn)
-	s2c, err = rc.RecentContactGet(context.Background(), c2s)
-
+	s2cTmp, err := rc.RecentContactGet(context.Background(), c2s)
+	if err != nil{
+		s2c.ErrCode = utils.ErrServer
+		mlog.Error(err)
+		apiUtils.SetBody(c,s2c)
+	}
+	s2c = s2cTmp
 	apiUtils.SetBody(c,s2c)
 }

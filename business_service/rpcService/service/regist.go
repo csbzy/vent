@@ -29,7 +29,7 @@ func (s *Service )GetRegCaptcha(ctx context.Context,req *pb.RegCaptchaC2S)(*pb.R
 	}
 	rc := pb.NewCaptchaManagerClient(conn)
 	getCaptchaS2C := &pb.GetCaptchaS2C{}
-	getCaptchaS2C,err := rc.GetCaptcha(context.Background(),&pb.GetCaptchaC2S{Type:utils.CaptchaTypeReg,Key:strconv.FormatUint(req.PhoneNumber,10)})
+	getCaptchaS2C,err := rc.GetCaptcha(context.Background(),&pb.GetCaptchaC2S{Type:utils.CaptchaTypeReg,Key:phoneStr})
 	if err != nil{
 		s2c.ErrCode = utils.ErrServer
 		return s2c,nil
@@ -60,7 +60,7 @@ func (s *Service) Register(ctx context.Context ,req *pb.RegisterC2S)(*pb.Registe
 		return res,nil
 	}
 	rc := pb.NewCaptchaManagerClient(conn)
-	checkCaptcha := &pb.CheckCaptchaC2S{Type:utils.CaptchaTypeReg,Key:strconv.FormatUint(req.PhoneNumber,10)}
+	checkCaptcha := &pb.CheckCaptchaC2S{Type:utils.CaptchaTypeReg,Key:strconv.FormatUint(req.PhoneNumber,10),Captcha:req.Captcha}
 	checkCaptchac2s ,err := rc.CheckCaptcha(context.Background(), checkCaptcha)
 	if err !=nil{
 		res.ErrCode = utils.ErrServer

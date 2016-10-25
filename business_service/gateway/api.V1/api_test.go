@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"sync"
 	"math/rand"
+	"github.com/chenshaobo/vent/business_service/utils"
 )
 
 var wg sync.WaitGroup
@@ -68,33 +69,34 @@ func apiRun(phonenum uint64) {
 	var userID uint64
 	var session string
 	s2c = &pb.RegCaptchaS2C{}
-	request("GET", "http://192.168.1.254:8080/api/v1/user/captcha/register/" + strconv.FormatUint(phonenum,10), nil, s2c, 0, "")
-	if s2c.(*pb.RegCaptchaS2C) == 0 {
+	ip := utils.GetLocalIP()
+	request("GET", "http://"+ ip +":8080/api/v1/user/captcha/register/" + strconv.FormatUint(phonenum,10), nil, s2c, 0, "")
+	if s2c.(*pb.RegCaptchaS2C).ErrCode == 0 {
 		regCaptcha := s2c.(*pb.RegCaptchaS2C).Captcha
 		c2s = &pb.RegisterC2S{PhoneNumber:phonenum, Password:"13502700001", Sex:1,Captcha:regCaptcha}
 		s2c = &pb.RegisterS2C{}
-		request("POST", "http://192.168.1.254:8080/api/v1/user", c2s, s2c, 0, "")
+		request("POST", "http://"+ip+":8080/api/v1/user/captcha/register", c2s, s2c, 0, "")
 
 		c2s = &pb.LoginC2S{PhoneNumber:phonenum, Password:"13502700001"}
 		s2c = &pb.LoginS2C{}
-		request("PUT", "http://192.168.1.254:8080/api/v1/user/session", c2s, s2c, 0, "")
+		request("PUT", "http://"+ip+":8080/api/v1/user/session", c2s, s2c, 0, "")
 		userID = s2c.(*pb.LoginS2C).UserID
 		session = s2c.(*pb.LoginS2C).Session
 		if userID > 0 {
 			c2s = &pb.UserInfoModifyC2S{UserID:userID, Nickname:"one", City:"shenzhen", Signature:"nice"}
 			s2c = &pb.UserInfoModifyS2C{}
-			request("PUT", "http://192.168.1.254:8080/api/v1/user/info", c2s, s2c, userID, session)
+			request("PUT", "http://"+ip+":8080/api/v1/user/info", c2s, s2c, userID, session)
 
 			s2c = &pb.UserInfoGetS2C{}
-			request("GET", "http://192.168.1.254:8080/api/v1/user/info/" + strconv.FormatUint(userID, 10), nil, s2c, userID, session)
+			request("GET", "http://"+ip+":8080/api/v1/user/info/" + strconv.FormatUint(userID, 10), nil, s2c, userID, session)
 
 			c2s = &pb.GeoUploadC2S{UserID:userID, Latitude:22.5435866852, Longitude:113.9372047977}
 			s2c = &pb.CommonS2C{}
-			request("PUT", "http://192.168.1.254:8080/api/v1/coordinate", c2s, s2c, userID, session)
+			request("PUT", "http://"+ip+":8080/api/v1/coordinate", c2s, s2c, userID, session)
 
 			c2s = &pb.RecentContactGetC2S{UserID:userID}
 			s2c = &pb.RecentContactGetS2C{}
-			request("GET", "http://192.168.1.254:8080/api/v1/relation/recentContact", c2s, s2c, userID, session)
+			request("GET", "http://"+ip+":8080/api/v1/relation/recentContact", c2s, s2c, userID, session)
 		}
 	}
 	wg.Done()
@@ -127,8 +129,7 @@ func request(method string, url string, m proto.Message, s2c proto.Message, user
 	buf.Reset()
 	//fmt.Printf("request %v:%v\n" +
 	//	"param:%v\n" +
-	//	"returnBody:%v\n" +
 	//	"response:%v\n" +
 	//	"return:%v\n" +
-	//	"err:%v\n\n\n", method, url, m, by, res, s2c.String(), err)
+	//	"err:%v\n\n\n", method, url, m, res, s2c.String(), err)
 }

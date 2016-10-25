@@ -30,44 +30,27 @@ func initApi(){
 	signal.SetupSignalApi()
 	geography.SetupGeoApi()
 	relation.SetupRelationApi()
+
+	iris.UseFunc(fin)
 	///iris.UseFunc(fin)
 	iris.AddServer(iris.ServerConfiguration{ListeningAddr: ":443", CertFile: "server.crt", KeyFile: "server.key"}) // you can close this server with .Close()
 	iris.Listen("0.0.0.0:8080")
+
 }
 
-//func initSessionDB(){
-//	serBytes, err := consul.Query(*reg, utils.SessionConfig)
-//	if err != nil{
-//		panic(err)
-//	}
-//	sessionConfig := &utils.RedisConfig{}
-//	json.Unmarshal(serBytes,&sessionConfig)
-//	mlog.Info("services: %v,serbyte:%v",sessionConfig,serBytes)
-//	db := redis.New(service.Config{Network: service.DefaultRedisNetwork,
-//		Addr:          sessionConfig.Host,
-//		Password:      "",
-//		Database:      strconv.FormatUint(sessionConfig.DB,10),
-//		MaxIdle:       0,
-//		MaxActive:     0,
-//		IdleTimeout:   service.DefaultRedisIdleTimeout,
-//		Prefix:        "",
-//		MaxAgeSeconds: service.DefaultRedisMaxAgeSeconds}) // optionally configure the bridge between your redis server
-//
-//	iris.UseSessionDB(db)
-//	//iris.Config.Sessions.Cookie = utils.CookieUserKey
-//
-//}
-
-
-
 func log(ctx *iris.Context){
-	mlog.Info("request:%v with params: %v",
+	mlog.Info("request:%v method:%v params: %v",
 		string(ctx.Path()),
+		string(ctx.Method()),
 		string(ctx.PostBody()))
 	ctx.Next()
 }
 
 func fin(ctx *iris.Context){
-	ctx.SetConnectionClose()
+	defer func (){
+		if err:= recover();err !=nil{
+			ctx.SetStatusCode(500)
+		}
+	}()
 }
 
