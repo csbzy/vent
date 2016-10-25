@@ -30,8 +30,8 @@ func GetChangePasswordCaptcha(c *iris.Context){
 		apiUtils.SetBody(c,s2c)
 		return
 	}
-	rc := pb.NewRegisterClient(conn)
-	s2cTmp ,err  := rc.GetRegCaptcha(context.Background(),c2s)
+	rc := pb.NewPasswordManagerClient(conn)
+	s2cTmp ,err  := rc.GetPasswordCaptcha(context.Background(),c2s)
 	if err != nil {
 		s2c.ErrCode = utils.ErrServer
 		mlog.Error(err)
@@ -61,8 +61,8 @@ func ChangePassword(c *iris.Context){
 		mlog.Error(err)
 		return
 	}
-	rc := pb.NewUserInfoManagerClient(conn)
-	s2cTmp, err := rc.UserInfoModify(context.Background(), c2s)
+	rc := pb.NewPasswordManagerClient(conn)
+	s2cTmp, err := rc.ChangePassword(context.Background(), c2s)
 	if err != nil{
 		s2c.ErrCode = utils.ErrServer
 		mlog.Error(err)

@@ -90,6 +90,17 @@ func apiRun(phonenum uint64) {
 			s2c = &pb.UserInfoGetS2C{}
 			request("GET", "http://"+ip+":8080/api/v1/user/info/" + strconv.FormatUint(userID, 10), nil, s2c, userID, session)
 
+			s2c = &pb.PasswordCaptchaS2C{}
+			request("GET", "http://"+ip+":8080/api/v1/user/captcha/changePassword/" + strconv.FormatUint(phonenum,10), c2s, s2c, userID, session)
+
+			passwordCaptcha := s2c.(*pb.PasswordCaptchaS2C).Captcha
+			c2s = &pb.ChangePasswordC2S{PhoneNumber:phonenum,Password:"NICETOMEETYOU",Captcha:passwordCaptcha}
+			s2c = &pb.ChangePasswordS2C{}
+			request("POST", "http://"+ip+":8080/api/v1/usre/captcha/changePassword", c2s, s2c, userID, session)
+
+
+
+
 			c2s = &pb.GeoUploadC2S{UserID:userID, Latitude:22.5435866852, Longitude:113.9372047977}
 			s2c = &pb.CommonS2C{}
 			request("PUT", "http://"+ip+":8080/api/v1/coordinate", c2s, s2c, userID, session)
@@ -97,6 +108,9 @@ func apiRun(phonenum uint64) {
 			c2s = &pb.RecentContactGetC2S{UserID:userID}
 			s2c = &pb.RecentContactGetS2C{}
 			request("GET", "http://"+ip+":8080/api/v1/relation/recentContact", c2s, s2c, userID, session)
+
+
+
 		}
 	}
 	wg.Done()
@@ -127,9 +141,9 @@ func request(method string, url string, m proto.Message, s2c proto.Message, user
 	by := buf.Bytes()
 	err = proto.Unmarshal(by, s2c)
 	buf.Reset()
-	//fmt.Printf("request %v:%v\n" +
-	//	"param:%v\n" +
-	//	"response:%v\n" +
-	//	"return:%v\n" +
-	//	"err:%v\n\n\n", method, url, m, res, s2c.String(), err)
+	fmt.Printf("request %v:%v\n" +
+		"param:%v\n" +
+		"response:%v\n" +
+		"return:%v\n" +
+		"err:%v\n\n\n", method, url, m, res, s2c.String(), err)
 }

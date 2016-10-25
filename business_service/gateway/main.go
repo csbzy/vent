@@ -9,10 +9,12 @@ import(
 	"github.com/chenshaobo/vent/business_service/gateway/api.V1/signal"
 	"github.com/chenshaobo/vent/business_service/gateway/api.V1/geography"
 	"github.com/chenshaobo/vent/business_service/gateway/api.V1/relation"
+	"github.com/chenshaobo/vent/business_service/utils"
 )
 
 var (
-	reg = flag.String("reg","172.16.7.119:8500","service register ")
+	DefaultIP = utils.GetLocalIP() + ":8500"
+	reg = flag.String("reg",DefaultIP,"service register ")
 )
 
 func main(){

@@ -20,7 +20,8 @@ import (
 )
 
 var (
-	reg = flag.String("reg", "172.16.7.119:8500", "register address")
+	DefaultIP = utils.GetLocalIP() + ":8500"
+	reg = flag.String("reg", DefaultIP, "register address")
 	serviceName = flag.String("ser",utils.ServiceDefaultName,"get service 's config from consul")
 	maxRedisConn = 0
 )
@@ -31,7 +32,7 @@ func init() {
 }
 
 func main() {
-	mlog.Start(mlog.LevelError,"")
+	mlog.Start(mlog.LevelInfo,"")
 	flag.Parse()
 	serBytes, err := consul.Query(*reg, *serviceName)
 	if err != nil{
@@ -98,6 +99,7 @@ func UserService(s utils.ServerInfo,listenIP string){
 	pb.RegisterRegisterServer(grpcSer,authSer)
 	pb.RegisterLoginServer(grpcSer,authSer)
 	pb.RegisterUserInfoManagerServer(grpcSer,authSer)
+	pb.RegisterPasswordManagerServer(grpcSer,authSer)
 	mlog.Info("start auth service ok.")
 	go grpcSer.Serve(lis)
 

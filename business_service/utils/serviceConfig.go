@@ -11,6 +11,7 @@ const (
 
 const(
 	CaptchaTypeReg = "captchaReg:"
+	CaptchaTypePassword = "captchaPWD:"
 )
 
 
