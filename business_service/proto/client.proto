@@ -59,6 +59,7 @@ message UserInfoModifyC2S{
 	string nickname  = 2;//名称
 	string signature =3;//个性签名
 	string city =4;     //居住城市
+	string avatar = 5;
 }
 
 message UserInfoModifyS2C{
@@ -76,6 +77,7 @@ message UserInfoGetS2C{
     string signature =4;//个性签名
     string city =5;     //居住城市
 	uint32 sex = 6; //性别 0.男 1.女
+	string avatar = 7 ; //头像
 }
 
 

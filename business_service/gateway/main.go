@@ -28,10 +28,10 @@ func main(){
 func initApi(){
 	mlog.Start(mlog.LevelInfo,"")
 	iris.UseFunc(log)
-	user.SetupUserApi()
-	signal.SetupSignalApi()
-	geography.SetupGeoApi()
-	relation.SetupRelationApi()
+	user.SetupUserApi() //  /api/v1/user...
+	signal.SetupSignalApi() //  /api/v1/signal/...
+	geography.SetupGeoApi() // /api/v1/coordinate....
+	relation.SetupRelationApi() // /api/v1/relation...
 
 	iris.UseFunc(fin)
 	///iris.UseFunc(fin)

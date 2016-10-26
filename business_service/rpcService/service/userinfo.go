@@ -33,6 +33,10 @@ func (s *Service) UserInfoModify(ctx context.Context ,req *pb.UserInfoModifyC2S,
 		infos = append(infos,redisapi.ScoreStruct{Member:"signature",Score:req.Signature})
 	}
 
+	if req.Avatar !=""{
+		infos = append(infos,redisapi.ScoreStruct{Member:"avatar",Score:req.Avatar})
+	}
+
 	s.Redisc.HMset(userInfoKey,infos)
 	res.ErrCode= 0
 	return res,nil

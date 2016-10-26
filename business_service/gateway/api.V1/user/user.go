@@ -16,5 +16,7 @@ func SetupUserApi(){
 	userParty.Put("/session",Login) //登录(更新session)
 	userParty.Put("/info",apiUtils.AuthSession,InfoModify) //更新用户信息
 	userParty.Get("/info/:userID",apiUtils.AuthSession,InfoGet) //获取用户信息
+
+	//userParty.Put("/avatar/:userID",apiUtils.AuthSession,UpdateAvatar)//上传头像
 }
 
