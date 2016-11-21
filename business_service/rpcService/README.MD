@@ -8,4 +8,4 @@
     {"serviceName":"captchaService","port":8302,"redisConfig":{"host":"127.0.0.1:6379","dbNum":2}}
     ]
 ```
-通过`serviceName` 指定自己需要调用的`grpc service `有哪些
+通过`serviceName` 指定自己需要run的`grpc service `有哪些
