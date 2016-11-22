@@ -39,3 +39,7 @@ VENT
                    |   redis  |
                    |          |
                    .----------.
+                   
+                   
+2. TODO
+  2.1 Use message broker to do async event
