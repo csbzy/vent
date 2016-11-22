@@ -1,7 +1,8 @@
 VENT
 ======
 `A Vent Social App`
-1. 框架图
+
+1.框架图
 
         .---------.             .---------.
         | clientA |             | clientB |
@@ -37,7 +38,8 @@ VENT
                    |   redis  |
                    |          |
                    .----------.
-                   
-                   
-2. TODO
- 2.1. Use message broker to do async event.
+
+
+2.TODO
+
+* Use message broker to do async event.
