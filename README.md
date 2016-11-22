@@ -3,7 +3,7 @@ VENT
 `A Vent Social App`
 
 
-1.框架图
+1. 框架图
 
         .---------.             .---------.
         | clientA |             | clientB |
